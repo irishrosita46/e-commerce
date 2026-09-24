@@ -1,11 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, ShieldCheck, Zap, PackageCheck } from "lucide-react";
+import { ProductGrid } from "@/components/catalog/ProductGrid";
+import productsData from "@/data/products.json";
+import { Product } from "@/types/product";
 
 export default function Home() {
+  const allProducts = productsData as Product[];
+  const featuredProducts = allProducts.filter((p) => p.featured);
+
   return (
     <div className="flex flex-col bg-white dark:bg-zinc-950">
       {/* Hero Section */}
@@ -34,13 +39,13 @@ export default function Home() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/about">
+            <Link href="https://it-agile-development.atlassian.net" target="_blank" rel="noopener noreferrer">
               <Button
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
               >
-                View Project Architecture
+                Atlassian Workspace
               </Button>
             </Link>
           </div>
@@ -48,7 +53,7 @@ export default function Home() {
       </section>
 
       {/* Feature Value Props using shadcn Card */}
-      <section className="py-16">
+      <section className="py-12 border-b border-zinc-100 dark:border-zinc-900">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
             <Card className="border-zinc-200 bg-white shadow-none dark:border-zinc-800 dark:bg-zinc-950">
@@ -98,6 +103,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Featured Catalog Section */}
+      <ProductGrid
+        products={featuredProducts}
+        title="Featured Selection"
+        subtitle="Flagship essentials engineered for tactile performance and longevity."
+      />
     </div>
   );
 }

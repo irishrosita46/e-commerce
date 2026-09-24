@@ -17,14 +17,14 @@
 
 In accordance with course guidelines, every student owns and develops a dedicated functional module:
 
-| Team Member | Student Email | Scrum Role | Functional Module Scope |
-| :--- | :--- | :--- | :--- |
-| **Irish Rosita** | `irish.rosita@ue-germany.de` | Scrum Master & Dev | Accounts, Authentication & Route Guard |
-| **Chukwuemeka Joel Offor** | `chukwuemekajoel.offor@ue-germany.de` | Product Owner & Dev | Catalog, Inventory Schema & Product Details |
-| **Sahibpreet Singh** | `sahibpreet@ue-germany.de` | Developer | Storefront Shell, Navigation & Responsive Layout |
-| **Varrel Omar Farazi** | `varrel.farazi@ue-germany.de` | Developer | Search Bar, Category Filters & Dynamic Queries |
-| **Kaya Demiray** | `kaya.demiray@ue-germany.de` | Developer | Shopping Cart, Badge Counter & Price Calculations |
-| **Khojiakbar Umarov** | `khojiakbar.umarov@ue-germany.de` | Developer | Checkout Validation, Payment Simulation & Orders |
+| Team Member                | Student Email                         | Scrum Role          | Functional Module Scope                           |
+| :------------------------- | :------------------------------------ | :------------------ | :------------------------------------------------ |
+| **Irish Rosita**           | `irish.rosita@ue-germany.de`          | Scrum Master & Dev  | Accounts, Authentication & Route Guard            |
+| **Chukwuemeka Joel Offor** | `chukwuemekajoel.offor@ue-germany.de` | Product Owner & Dev | Catalog, Inventory Schema & Product Details       |
+| **Sahibpreet Singh**       | `sahibpreet@ue-germany.de`            | Developer           | Storefront Shell, Navigation & Responsive Layout  |
+| **Varrel Omar Farazi**     | `varrel.farazi@ue-germany.de`         | Developer           | Search Bar, Category Filters & Dynamic Queries    |
+| **Kaya Demiray**           | `kaya.demiray@ue-germany.de`          | Developer           | Shopping Cart, Badge Counter & Price Calculations |
+| **Khojiakbar Umarov**      | `khojiakbar.umarov@ue-germany.de`     | Developer           | Checkout Validation, Payment Simulation & Orders  |
 
 ---
 
@@ -40,10 +40,12 @@ In accordance with course guidelines, every student owns and develops a dedicate
 ## 4. Getting Started & Local Setup
 
 ### Prerequisites
+
 - Node.js 20+ or Bun runtime
 - Git
 
 ### Installation
+
 ```bash
 # Clone repository
 git clone https://github.com/irishrosita46/e-commerce.git
@@ -61,6 +63,7 @@ bun run dev
 Open [http://localhost:3000](http://localhost:3000) in your browser to inspect the application.
 
 ### Verification & Production Build
+
 ```bash
 bun run build
 # or: npm run build
@@ -71,6 +74,7 @@ bun run build
 ## 5. Agile Project Documentation
 
 All sprint planning, user stories, burndown tracking, and meeting minutes are managed on Atlassian Cloud:
+
 - **Jira Project:** `SCRUM` ([Board Link](https://it-agile-development.atlassian.net/jira/software/projects/SCRUM/boards/1))
 - **Confluence Space:** `SD` (Software Development)
   - Team Charter & Working Agreements (DoR / DoD)
