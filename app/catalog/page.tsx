@@ -5,7 +5,8 @@ import { ProductGrid } from "@/components/catalog/ProductGrid";
 
 export const metadata = {
   title: "Catalog — AuraStore",
-  description: "Browse curated minimalist tech accessories and workplace essentials.",
+  description:
+    "Browse curated minimalist tech accessories and workplace essentials.",
 };
 
 export default function CatalogPage() {

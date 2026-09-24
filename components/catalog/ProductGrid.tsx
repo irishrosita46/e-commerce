@@ -97,10 +97,10 @@ export function ProductGrid({
         onOpenChange={(open) => !open && setSelectedProduct(null)}
       >
         {selectedProduct && (
-          <DialogContent className="max-w-2xl border-zinc-200 bg-white p-0 shadow-none dark:border-zinc-800 dark:bg-zinc-950 sm:rounded-xl overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              {/* Product Image Frame */}
-              <div className="relative aspect-square w-full bg-zinc-100 dark:bg-zinc-900 border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800">
+          <DialogContent className="w-full max-w-2xl sm:max-w-2xl md:max-w-3xl border border-zinc-200 bg-white p-0 shadow-lg dark:border-zinc-800 dark:bg-zinc-950 sm:rounded-2xl overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 min-h-[380px]">
+              {/* Product Image Frame (Full Height) */}
+              <div className="relative w-full min-h-[260px] md:min-h-[380px] bg-zinc-100 dark:bg-zinc-900 border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800">
                 <Image
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
@@ -110,57 +110,68 @@ export function ProductGrid({
                 />
               </div>
 
-              {/* Product Info */}
-              <div className="p-6 flex flex-col justify-between space-y-4">
-                <DialogHeader className="space-y-2 text-left">
-                  <div className="flex items-center gap-2">
+              {/* Product Info Column */}
+              <div className="flex flex-col justify-between p-6 sm:p-7 space-y-5">
+                <DialogHeader className="space-y-3 text-left">
+                  {/* Category & Status with padding right to clear close button */}
+                  <div className="flex items-center gap-2 pr-8">
                     <Badge
                       variant="outline"
-                      className="border-zinc-200 bg-zinc-50 text-zinc-800 text-[11px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+                      className="border-zinc-200 bg-zinc-50 text-zinc-700 text-xs font-medium dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
                     >
                       {selectedProduct.category}
                     </Badge>
                     <Badge
-                      variant={selectedProduct.inStock ? "outline" : "destructive"}
+                      variant={
+                        selectedProduct.inStock ? "outline" : "destructive"
+                      }
                       className={
                         selectedProduct.inStock
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-800 text-[11px] dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
-                          : "text-[11px]"
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-medium dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300"
+                          : "text-xs font-medium"
                       }
                     >
                       {selectedProduct.inStock ? "In Stock" : "Out of Stock"}
                     </Badge>
                   </div>
 
-                  <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
+                  <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-snug">
                     {selectedProduct.name}
                   </DialogTitle>
 
-                  <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed pt-1">
+                  <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                    {selectedProduct.tagline}
+                  </p>
+
+                  <DialogDescription className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed pt-1">
                     {selectedProduct.description}
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+                {/* Footer Action Bar */}
+                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-900 flex items-center justify-between gap-4">
                   <div className="flex flex-col">
                     <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-medium">
                       Total Price
                     </span>
-                    <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                    <span className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                       ${selectedProduct.price.toFixed(2)}
                     </span>
                   </div>
 
                   <Button
+                    size="default"
                     disabled={!selectedProduct.inStock}
                     onClick={handleDialogAdd}
-                    className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
+                    className="h-10 px-5 font-medium shrink-0 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors"
                   >
                     {dialogAdded ? (
                       <>
-                        <Check className="mr-1.5 h-4 w-4" />
-                        Added to Cart
+                        <Check className="mr-1.5 h-4 w-4 text-emerald-400" />
+                        Added
                       </>
+                    ) : !selectedProduct.inStock ? (
+                      "Unavailable"
                     ) : (
                       <>
                         <Plus className="mr-1.5 h-4 w-4" />

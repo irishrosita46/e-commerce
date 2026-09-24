@@ -9,7 +9,7 @@ import { Product } from "@/types/product";
 
 export default function Home() {
   const allProducts = productsData as Product[];
-  const featuredProducts = allProducts.filter((p) => p.featured);
+  const featuredProducts = allProducts.filter((p) => p.featured).slice(0, 4);
 
   return (
     <div className="flex flex-col bg-white dark:bg-zinc-950">
@@ -39,7 +39,11 @@ export default function Home() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link href="https://it-agile-development.atlassian.net" target="_blank" rel="noopener noreferrer">
+            <Link
+              href="https://it-agile-development.atlassian.net"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button
                 variant="outline"
                 size="lg"
