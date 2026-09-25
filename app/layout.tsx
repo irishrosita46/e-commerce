@@ -16,7 +16,7 @@ import Navbar from "@/components/storefront/Navbar";
 import Footer from "@/components/storefront/Footer";
 
 export const metadata: Metadata = {
-  title: "AuraStore — Modern E-Commerce Experience",
+  title: "AuraStore - Modern E-Commerce Experience",
   description: "IT Agile Development Retake Assessment Project",
 };
 

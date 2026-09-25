@@ -4,7 +4,7 @@ import { Product } from "@/types/product";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 
 export const metadata = {
-  title: "Catalog — AuraStore",
+  title: "Catalog - AuraStore",
   description:
     "Browse curated minimalist tech accessories and workplace essentials.",
 };
