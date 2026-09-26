@@ -19,12 +19,14 @@ interface ProductGridProps {
   products: Product[];
   title?: string;
   subtitle?: string;
+  filterSlot?: React.ReactNode;
 }
 
 export function ProductGrid({
   products,
   title = "Curated Catalog",
   subtitle = "Precision engineered hardware and workplace essentials.",
+  filterSlot,
 }: ProductGridProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [dialogAdded, setDialogAdded] = useState(false);
@@ -39,20 +41,6 @@ export function ProductGrid({
     setDialogAdded(true);
     setTimeout(() => setDialogAdded(false), 1500);
   };
-
-  if (!products || products.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 py-16 text-center dark:border-zinc-800">
-        <Package className="h-10 w-10 text-zinc-400" />
-        <h3 className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-          No products found
-        </h3>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-          Check back later as new inventory is currently being scaffolded.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <section className="py-12">
@@ -79,16 +67,31 @@ export function ProductGrid({
           </div>
         </div>
 
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onQuickView={handleQuickView}
-            />
-          ))}
-        </div>
+        {/* Filter Slot */}
+        {filterSlot && <div className="mb-8">{filterSlot}</div>}
+
+        {/* Product Cards Grid or Empty State */}
+        {products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 py-16 text-center dark:border-zinc-800">
+            <Package className="h-10 w-10 text-zinc-400" />
+            <h3 className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              No products found
+            </h3>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              No items match the selected category or filter criteria.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onQuickView={handleQuickView}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Quick View Dialog */}
