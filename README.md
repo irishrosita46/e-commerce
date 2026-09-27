@@ -1,6 +1,6 @@
-# AuraStore — E-Commerce Platform
+# AuraStore - E-Commerce Platform
 
-**Module:** IT Agile Development — Retake Project  
+**Module:** IT Agile Development - Retake Project  
 **Institution:** University of Europe for Applied Sciences (UE Germany)  
 **Academic Assessor:** Dr. Naghmeh Niknejad  
 **Atlassian Workspace:** [Jira Board & Confluence Space (SD)](https://it-agile-development.atlassian.net)
