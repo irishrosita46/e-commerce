@@ -3,7 +3,10 @@
 import React, { useState, useMemo } from "react";
 import { Product } from "@/types/product";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
-import { CategoryPills, CategoryCount } from "@/components/search/CategoryPills";
+import {
+  CategoryPills,
+  CategoryCount,
+} from "@/components/search/CategoryPills";
 import { SearchInput } from "@/components/search/SearchInput";
 
 interface CatalogViewProps {
@@ -16,7 +19,7 @@ export function CatalogView({ products }: CatalogViewProps) {
 
   const categories: CategoryCount[] = useMemo(() => {
     const rawCategories = Array.from(
-      new Set(products.map((p) => p.category))
+      new Set(products.map((p) => p.category)),
     ).sort();
 
     const trimmedQuery = searchQuery.trim().toLowerCase();
@@ -26,7 +29,7 @@ export function CatalogView({ products }: CatalogViewProps) {
           (p) =>
             p.name.toLowerCase().includes(trimmedQuery) ||
             p.tagline.toLowerCase().includes(trimmedQuery) ||
-            p.description.toLowerCase().includes(trimmedQuery)
+            p.description.toLowerCase().includes(trimmedQuery),
         );
 
     return [
@@ -59,7 +62,8 @@ export function CatalogView({ products }: CatalogViewProps) {
     setSearchQuery("");
   };
 
-  const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "All";
+  const hasActiveFilters =
+    searchQuery.trim() !== "" || selectedCategory !== "All";
 
   const subtitle = useMemo(() => {
     if (searchQuery.trim() && selectedCategory !== "All") {

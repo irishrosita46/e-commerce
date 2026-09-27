@@ -36,7 +36,7 @@ export function SearchInput({
           "h-10 w-full rounded-lg border border-zinc-200 bg-white pl-10 pr-9 text-sm text-zinc-900",
           "placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900",
           "dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500",
-          "dark:focus:border-zinc-100 dark:focus:ring-zinc-100 transition-colors"
+          "dark:focus:border-zinc-100 dark:focus:ring-zinc-100 transition-colors",
         )}
       />
       {value && (
