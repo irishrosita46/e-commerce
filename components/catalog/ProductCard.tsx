@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Check, AlertCircle } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -20,12 +21,15 @@ export function ProductCard({
   onQuickView,
 }: ProductCardProps) {
   const [added, setAdded] = React.useState(false);
+  const { addItem } = useCart();
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!product.inStock) return;
     if (onAddToCart) {
       onAddToCart(product);
+    } else {
+      addItem(product);
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);

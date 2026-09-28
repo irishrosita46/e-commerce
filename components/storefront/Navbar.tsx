@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Search, User, Menu, X, LogOut } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 interface NavbarProps {
   cartItemCount?: number;
@@ -20,6 +21,8 @@ export default function Navbar({
   onLogoutClick,
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { totalItems, openCart } = useCart();
+  const effectiveCartCount = cartItemCount > 0 ? cartItemCount : totalItems;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95">
@@ -103,25 +106,24 @@ export default function Navbar({
             </Button>
           )}
 
-          {/* Cart Icon with shadcn Badge */}
-          <Link href="/cart">
-            <Button
-              variant="outline"
-              size="icon"
-              className="relative h-8 w-8 border-zinc-200 dark:border-zinc-800"
-              aria-label="Shopping Cart"
-            >
-              <ShoppingBag className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-              {cartItemCount > 0 && (
-                <Badge
-                  variant="default"
-                  className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full p-0 px-1 text-[10px] font-semibold bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                >
-                  {cartItemCount}
-                </Badge>
-              )}
-            </Button>
-          </Link>
+          {/* Cart Icon with shadcn Badge & Drawer Trigger */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={openCart}
+            className="relative h-8 w-8 border-zinc-200 dark:border-zinc-800 cursor-pointer"
+            aria-label={`Shopping Cart (${effectiveCartCount} items)`}
+          >
+            <ShoppingBag className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+            {effectiveCartCount > 0 && (
+              <Badge
+                variant="default"
+                className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full p-0 px-1 text-[10px] font-semibold bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+              >
+                {effectiveCartCount}
+              </Badge>
+            )}
+          </Button>
 
           {/* Mobile menu toggle */}
           <Button

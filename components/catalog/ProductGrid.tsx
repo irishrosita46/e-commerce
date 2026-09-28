@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Package, Plus, Check } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 interface ProductGridProps {
   products: Product[];
@@ -30,6 +31,7 @@ export function ProductGrid({
 }: ProductGridProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [dialogAdded, setDialogAdded] = useState(false);
+  const { addItem } = useCart();
 
   const handleQuickView = (product: Product) => {
     setSelectedProduct(product);
@@ -38,6 +40,7 @@ export function ProductGrid({
 
   const handleDialogAdd = () => {
     if (!selectedProduct || !selectedProduct.inStock) return;
+    addItem(selectedProduct);
     setDialogAdded(true);
     setTimeout(() => setDialogAdded(false), 1500);
   };
@@ -88,6 +91,7 @@ export function ProductGrid({
                 key={product.id}
                 product={product}
                 onQuickView={handleQuickView}
+                onAddToCart={(p) => addItem(p)}
               />
             ))}
           </div>
