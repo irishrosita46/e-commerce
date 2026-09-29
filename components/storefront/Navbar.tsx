@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Search, User, Menu, X, LogOut } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavbarProps {
   cartItemCount?: number;
@@ -22,7 +23,12 @@ export default function Navbar({
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems, openCart } = useCart();
+  const { user, isAuthenticated, logout, openAuthModal } = useAuth();
+
   const effectiveCartCount = cartItemCount > 0 ? cartItemCount : totalItems;
+  const effectiveUserName = userName || (isAuthenticated ? user?.name : null);
+  const handleLoginClick = onLoginClick || (() => openAuthModal("login"));
+  const handleLogoutClick = onLogoutClick || logout;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95">
@@ -79,17 +85,17 @@ export default function Navbar({
           </Link>
 
           {/* User Account / Auth */}
-          {userName ? (
+          {effectiveUserName ? (
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-zinc-500" />
-                {userName}
+                <span className="max-w-[120px] truncate">{effectiveUserName}</span>
               </span>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={onLogoutClick}
-                className="h-8 px-2.5 text-xs border-zinc-200 dark:border-zinc-800"
+                onClick={handleLogoutClick}
+                className="h-8 px-2.5 text-xs border-zinc-200 dark:border-zinc-800 cursor-pointer"
               >
                 <LogOut className="h-3.5 w-3.5 mr-1" />
                 Sign out
@@ -99,8 +105,8 @@ export default function Navbar({
             <Button
               variant="default"
               size="sm"
-              onClick={onLoginClick}
-              className="h-8 px-3.5 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
+              onClick={handleLoginClick}
+              className="h-8 px-3.5 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 cursor-pointer"
             >
               Sign in
             </Button>
@@ -174,6 +180,36 @@ export default function Navbar({
             >
               About
             </Link>
+
+            <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+              {effectiveUserName ? (
+                <div className="flex items-center justify-between px-3 py-1">
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[180px]">
+                    {effectiveUserName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleLogoutClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400 cursor-pointer"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => {
+                    handleLoginClick();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full text-xs h-9 bg-zinc-900 text-white"
+                >
+                  Sign in / Register
+                </Button>
+              )}
+            </div>
           </nav>
         </div>
       )}

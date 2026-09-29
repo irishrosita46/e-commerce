@@ -3,7 +3,9 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   Sheet,
   SheetContent,
@@ -14,9 +16,11 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Plus, Minus, Trash2, ShoppingBag, ArrowRight, Lock } from "lucide-react";
 
 export function CartDrawer() {
+  const router = useRouter();
+  const { isAuthenticated, openAuthModal } = useAuth();
   const {
     items,
     isCartOpen,
@@ -27,6 +31,15 @@ export function CartDrawer() {
     totalItems,
     subtotal,
   } = useCart();
+
+  const handleProceedToCheckout = () => {
+    setIsCartOpen(false);
+    if (!isAuthenticated) {
+      openAuthModal("login", "/checkout");
+    } else {
+      router.push("/checkout");
+    }
+  };
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -173,16 +186,14 @@ export function CartDrawer() {
               <Separator className="my-1 bg-zinc-200 dark:bg-zinc-800" />
 
               <div className="flex flex-col gap-2">
-                <Link
-                  href="/checkout"
-                  onClick={() => setIsCartOpen(false)}
-                  className="w-full"
+                <Button
+                  onClick={handleProceedToCheckout}
+                  className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium flex items-center justify-center gap-1.5">
-                    <span>Proceed to Checkout</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </Link>
+                  {!isAuthenticated && <Lock className="h-3.5 w-3.5 mr-0.5 text-zinc-400" />}
+                  <span>{isAuthenticated ? "Proceed to Checkout" : "Sign in to Checkout"}</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
 
                 <Button
                   variant="outline"

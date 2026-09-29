@@ -12,6 +12,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { AuthProvider } from "@/context/AuthContext";
+import { AuthModal } from "@/components/auth/AuthModal";
 import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import Navbar from "@/components/storefront/Navbar";
@@ -33,12 +35,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="font-sans min-h-full flex flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
-        <CartProvider>
-          <Navbar />
-          <CartDrawer />
-          <div className="flex-1">{children}</div>
-          <Footer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            <CartDrawer />
+            <AuthModal />
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
