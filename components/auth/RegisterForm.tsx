@@ -11,7 +11,10 @@ interface RegisterFormProps {
   onSwitchToLogin: () => void;
 }
 
-export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) {
+export function RegisterForm({
+  onSuccess,
+  onSwitchToLogin,
+}: RegisterFormProps) {
   const { register } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,7 +45,9 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       return;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match. Please re-enter your confirmation password.");
+      setError(
+        "Passwords do not match. Please re-enter your confirmation password.",
+      );
       return;
     }
 
@@ -123,7 +128,11 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

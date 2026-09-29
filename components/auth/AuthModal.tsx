@@ -32,7 +32,10 @@ export function AuthModal() {
   };
 
   return (
-    <Dialog open={isAuthModalOpen} onOpenChange={(open) => !open && closeAuthModal()}>
+    <Dialog
+      open={isAuthModalOpen}
+      onOpenChange={(open) => !open && closeAuthModal()}
+    >
       <DialogContent className="w-full max-w-md border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 sm:rounded-2xl">
         <DialogHeader className="space-y-2 text-left">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 mb-1">
@@ -43,7 +46,9 @@ export function AuthModal() {
             )}
           </div>
           <DialogTitle className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-            {authMode === "login" ? "Sign in to AuraStore" : "Create your account"}
+            {authMode === "login"
+              ? "Sign in to AuraStore"
+              : "Create your account"}
           </DialogTitle>
           <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400">
             {authMode === "login"

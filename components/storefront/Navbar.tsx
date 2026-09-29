@@ -1,10 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Search, User, Menu, X, LogOut } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  ShoppingBag,
+  Search,
+  User,
+  Menu,
+  X,
+  LogOut,
+  ChevronRight,
+} from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -22,6 +37,10 @@ export default function Navbar({
   onLogoutClick,
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+
   const { totalItems, openCart } = useCart();
   const { user, isAuthenticated, logout, openAuthModal } = useAuth();
 
@@ -29,6 +48,24 @@ export default function Navbar({
   const effectiveUserName = userName || (isAuthenticated ? user?.name : null);
   const handleLoginClick = onLoginClick || (() => openAuthModal("login"));
   const handleLogoutClick = onLogoutClick || logout;
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserDropdownOpen(false);
+      }
+    }
+    if (isUserDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isUserDropdownOpen]);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95">
@@ -73,44 +110,16 @@ export default function Navbar({
           </nav>
         </div>
 
-        {/* Action Controls: Search, Auth & Cart */}
-        <div className="flex items-center gap-3">
+        {/* Action Controls: Search, Cart, & Auth */}
+        <div className="flex items-center gap-2">
           {/* Quick Search */}
           <Link
             href="/catalog"
-            className="hidden sm:flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50/70 px-3 py-1.5 text-xs text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            className="hidden sm:flex h-8 items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50/70 px-3 text-xs text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           >
             <Search className="h-3.5 w-3.5" />
             <span>Search products...</span>
           </Link>
-
-          {/* User Account / Auth */}
-          {effectiveUserName ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-zinc-500" />
-                <span className="max-w-[120px] truncate">{effectiveUserName}</span>
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogoutClick}
-                className="h-8 px-2.5 text-xs border-zinc-200 dark:border-zinc-800 cursor-pointer"
-              >
-                <LogOut className="h-3.5 w-3.5 mr-1" />
-                Sign out
-              </Button>
-            </div>
-          ) : (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleLoginClick}
-              className="h-8 px-3.5 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 cursor-pointer"
-            >
-              Sign in
-            </Button>
-          )}
 
           {/* Cart Icon with shadcn Badge & Drawer Trigger */}
           <Button
@@ -131,12 +140,97 @@ export default function Navbar({
             )}
           </Button>
 
+          {/* User Account & Sign Out (Positioned on the right of Cart with matching outline borders) */}
+          {effectiveUserName ? (
+            <div className="flex items-center gap-2">
+              {/* User Dropdown Menu Trigger */}
+              <div className="relative" ref={userDropdownRef}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="h-8 w-8 border-zinc-200 dark:border-zinc-800 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 cursor-pointer"
+                  title={`Account: ${effectiveUserName}`}
+                  aria-label={`Account of ${effectiveUserName}`}
+                  aria-expanded={isUserDropdownOpen}
+                >
+                  <User className="h-4 w-4" />
+                </Button>
+
+                {/* Dropdown Menu showing name, email, and actions */}
+                {isUserDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-zinc-200 bg-white p-2 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 z-50 animate-in fade-in-0 zoom-in-95">
+                    <div className="px-2.5 py-2 border-b border-zinc-100 dark:border-zinc-800 mb-1">
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                        {effectiveUserName}
+                      </p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+                        {user?.email}
+                      </p>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        href="/checkout"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900 transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <ShoppingBag className="h-3.5 w-3.5 text-zinc-500" />
+                          <span>Checkout Portal</span>
+                        </span>
+                        <ChevronRight className="h-3 w-3 text-zinc-400" />
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-zinc-100 dark:border-zinc-800 pt-1 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setIsSignOutDialogOpen(true);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-red-600 hover:bg-red-50/70 dark:text-red-400 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="h-3.5 w-3.5" />
+                        <span>Sign out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Sign out Icon Button with confirmation dialog trigger */}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsSignOutDialogOpen(true)}
+                className="h-8 w-8 border-zinc-200 dark:border-zinc-800 text-zinc-600 hover:border-red-200 hover:bg-red-50/50 hover:text-red-600 dark:text-zinc-400 dark:hover:border-red-900/60 dark:hover:bg-red-950/30 dark:hover:text-red-400 cursor-pointer transition-colors"
+                title="Sign out"
+                aria-label="Sign out"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleLoginClick}
+              className="h-8 w-8 border-zinc-200 dark:border-zinc-800 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 cursor-pointer"
+              title="Sign in / Register"
+              aria-label="Sign in"
+            >
+              <User className="h-4 w-4" />
+            </Button>
+          )}
+
           {/* Mobile menu toggle */}
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="h-8 w-8 md:hidden text-zinc-600 dark:text-zinc-400"
+            className="h-8 w-8 md:hidden border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? (
@@ -190,7 +284,7 @@ export default function Navbar({
                   <button
                     type="button"
                     onClick={() => {
-                      handleLogoutClick();
+                      setIsSignOutDialogOpen(true);
                       setIsMobileMenuOpen(false);
                     }}
                     className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400 cursor-pointer"
@@ -213,6 +307,46 @@ export default function Navbar({
           </nav>
         </div>
       )}
+
+      {/* Sign Out Confirmation Dialog */}
+      <Dialog open={isSignOutDialogOpen} onOpenChange={setIsSignOutDialogOpen}>
+        <DialogContent className="w-full max-w-sm border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950 sm:rounded-2xl">
+          <DialogHeader className="space-y-2 text-left">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400 mb-1">
+              <LogOut className="h-5 w-5" />
+            </div>
+            <DialogTitle className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+              Sign out of AuraStore?
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              Are you sure you want to sign out, {effectiveUserName}? Your cart
+              items will remain safely stored in this browser session.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4 flex items-center justify-end gap-2.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSignOutDialogOpen(false)}
+              className="text-xs h-9 border-zinc-200 dark:border-zinc-800 cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => {
+                setIsSignOutDialogOpen(false);
+                handleLogoutClick();
+              }}
+              className="text-xs h-9 bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 font-medium cursor-pointer"
+            >
+              Sign out
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

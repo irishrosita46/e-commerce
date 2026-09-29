@@ -108,7 +108,11 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>
@@ -131,8 +135,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           onClick={handleFillDemo}
           className="w-full text-[11px] h-8 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900"
         >
-          <Sparkles className="h-3 w-3 mr-1.5 text-zinc-500" />
-          Fill demo account (customer@aurastore.com)
+          Demo account (customer@aurastore.com)
         </Button>
       </div>
 

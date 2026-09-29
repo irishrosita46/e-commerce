@@ -39,23 +39,15 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 mb-5">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full  mb-5">
             <Lock className="h-7 w-7" />
           </div>
-
-          <Badge
-            variant="outline"
-            className="mb-3 border-amber-200 bg-amber-50/50 text-amber-800 text-[11px] font-medium dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-300"
-          >
-            Route Guard Protected
-          </Badge>
 
           <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">
             Authentication Required
           </h1>
           <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-            In accordance with course security requirements, customers must register and log in
-            before placing an order. Checkout without verified authentication is strictly prevented.
+            Customers must register and log in before placing an order.
           </p>
 
           <div className="space-y-2.5">
@@ -92,19 +84,12 @@ export default function CheckoutPage() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              Checkout Portal
+              Checkout
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              Sprint 1 authenticated session verified. Complete order data contracts and address information.
+              Complete order data contracts and address information.
             </p>
           </div>
-          <Badge
-            variant="outline"
-            className="border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-medium dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300 flex items-center gap-1.5 py-1 px-2.5"
-          >
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Authenticated Customer
-          </Badge>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -132,23 +117,13 @@ export default function CheckoutPage() {
               <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-2">
                 Order Data Contracts &amp; Delivery Information
               </h2>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mb-6">
-                Customer account is verified. Structured shipping address form and order placement contracts
-                will be completed under Day 08 by Khojiakbar Umarov (SCRUM-41).
-              </p>
 
               <div className="rounded-lg border border-dashed border-zinc-200 p-4 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950/40 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-200">Customer Reference:</span>
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-200">
+                    Customer Reference:
+                  </span>
                   <span className="font-mono text-[11px]">{user?.id}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-200">Validation Status:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Session Validated &amp; Route Guard Cleared</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-200">Pending Story:</span>
-                  <span className="font-mono text-[11px]">SCRUM-41 (Checkout schema &amp; reference generator)</span>
                 </div>
               </div>
             </div>
@@ -175,7 +150,10 @@ export default function CheckoutPage() {
             ) : (
               <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                 {items.map((item) => (
-                  <div key={item.product.id} className="flex items-center justify-between text-xs gap-3">
+                  <div
+                    key={item.product.id}
+                    className="flex items-center justify-between text-xs gap-3"
+                  >
                     <div className="flex items-center gap-2 min-w-0">
                       <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-zinc-100 dark:border-zinc-800">
                         <Image
@@ -190,7 +168,9 @@ export default function CheckoutPage() {
                         <p className="font-medium text-zinc-900 dark:text-zinc-100 truncate">
                           {item.product.name}
                         </p>
-                        <p className="text-[10px] text-zinc-400">Qty: {item.quantity}</p>
+                        <p className="text-[10px] text-zinc-400">
+                          Qty: {item.quantity}
+                        </p>
                       </div>
                     </div>
                     <span className="font-semibold text-zinc-900 dark:text-zinc-100 shrink-0">

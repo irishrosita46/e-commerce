@@ -16,7 +16,14 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Minus, Trash2, ShoppingBag, ArrowRight, Lock } from "lucide-react";
+import {
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingBag,
+  ArrowRight,
+  Lock,
+} from "lucide-react";
 
 export function CartDrawer() {
   const router = useRouter();
@@ -75,7 +82,8 @@ export function CartDrawer() {
               Your cart is empty
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs mb-6">
-              Looks like you have not added any hardware essentials yet. Explore our curated catalog.
+              Looks like you have not added any hardware essentials yet. Explore
+              our curated catalog.
             </p>
             <Button
               onClick={() => setIsCartOpen(false)}
@@ -131,7 +139,9 @@ export function CartDrawer() {
                       <div className="flex items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                         <button
                           type="button"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity - 1)
+                          }
                           className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer"
                           aria-label="Decrease quantity"
                         >
@@ -142,7 +152,9 @@ export function CartDrawer() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity + 1)
+                          }
                           className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer"
                           aria-label="Increase quantity"
                         >
@@ -190,8 +202,14 @@ export function CartDrawer() {
                   onClick={handleProceedToCheckout}
                   className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  {!isAuthenticated && <Lock className="h-3.5 w-3.5 mr-0.5 text-zinc-400" />}
-                  <span>{isAuthenticated ? "Proceed to Checkout" : "Sign in to Checkout"}</span>
+                  {!isAuthenticated && (
+                    <Lock className="h-3.5 w-3.5 mr-0.5 text-zinc-400" />
+                  )}
+                  <span>
+                    {isAuthenticated
+                      ? "Proceed to Checkout"
+                      : "Sign in to Checkout"}
+                  </span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
 
