@@ -8,6 +8,8 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { CheckoutForm } from "@/components/checkout/CheckoutForm";
+import { calculateOrderTotals } from "@/lib/orders";
 import {
   Lock,
   ShieldAlert,
@@ -21,7 +23,8 @@ import {
 
 export default function CheckoutPage() {
   const { user, isAuthenticated, isLoading, openAuthModal } = useAuth();
-  const { items, totalItems, subtotal } = useCart();
+  const { items, totalItems, subtotal, clearCart } = useCart();
+  const totals = calculateOrderTotals(subtotal);
 
   if (isLoading) {
     return (
@@ -35,7 +38,7 @@ export default function CheckoutPage() {
   }
 
   // Mandatory Course Route Guard: Checkout without authentication must be prevented
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
@@ -112,21 +115,13 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Checkout Structure Preview (Sprint 1 foundation, Day 08 SCRUM-41 target) */}
-            <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60">
-              <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                Order Data Contracts &amp; Delivery Information
-              </h2>
-
-              <div className="rounded-lg border border-dashed border-zinc-200 p-4 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950/40 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-200">
-                    Customer Reference:
-                  </span>
-                  <span className="font-mono text-[11px]">{user?.id}</span>
-                </div>
-              </div>
-            </div>
+            {/* Checkout Form */}
+            <CheckoutForm
+              user={user}
+              items={items}
+              subtotal={subtotal}
+              onOrderPlaced={() => clearCart()}
+            />
           </div>
 
           {/* Sidebar Cart Summary */}
@@ -186,15 +181,21 @@ export default function CheckoutPage() {
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between text-zinc-500">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>${totals.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-zinc-500">
                 <span>Shipping</span>
-                <span>Free (Standard)</span>
+                <span>
+                  {totals.shippingCost === 0 ? "Free (Orders over $100)" : `$${totals.shippingCost.toFixed(2)}`}
+                </span>
+              </div>
+              <div className="flex justify-between text-zinc-500">
+                <span>Estimated Tax (8%)</span>
+                <span>${totals.tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold text-sm text-zinc-900 dark:text-zinc-100 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <span>Total</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>${totals.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
