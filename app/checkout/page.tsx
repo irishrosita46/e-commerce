@@ -186,7 +186,9 @@ export default function CheckoutPage() {
               <div className="flex justify-between text-zinc-500">
                 <span>Shipping</span>
                 <span>
-                  {totals.shippingCost === 0 ? "Free (Orders over $100)" : `$${totals.shippingCost.toFixed(2)}`}
+                  {totals.shippingCost === 0
+                    ? "Free (Orders over $100)"
+                    : `$${totals.shippingCost.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between text-zinc-500">

@@ -7,7 +7,9 @@ export interface ShippingAddress {
   country: string;
 }
 
-export type AddressValidationErrors = Partial<Record<keyof ShippingAddress, string>>;
+export type AddressValidationErrors = Partial<
+  Record<keyof ShippingAddress, string>
+>;
 
 export type PaymentMethod = "credit_card" | "paypal" | "apple_pay";
 

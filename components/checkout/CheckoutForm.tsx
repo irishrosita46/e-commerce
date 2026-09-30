@@ -51,7 +51,8 @@ export function CheckoutForm({
     country: "Germany",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("credit_card");
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentMethod>("credit_card");
   const [errors, setErrors] = useState<AddressValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
@@ -124,7 +125,10 @@ export function CheckoutForm({
           <CheckCircle2 className="h-8 w-8" />
         </div>
 
-        <Badge variant="outline" className="mb-3 border-emerald-300 text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300">
+        <Badge
+          variant="outline"
+          className="mb-3 border-emerald-300 text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300"
+        >
           Order Confirmed
         </Badge>
 
@@ -132,7 +136,11 @@ export function CheckoutForm({
           Thank you for your purchase!
         </h2>
         <p className="mt-1 text-xs text-zinc-500">
-          A receipt has been generated and dispatched to <span className="font-medium text-zinc-900 dark:text-zinc-200">{completedOrder.shippingAddress.email}</span>.
+          A receipt has been generated and dispatched to{" "}
+          <span className="font-medium text-zinc-900 dark:text-zinc-200">
+            {completedOrder.shippingAddress.email}
+          </span>
+          .
         </p>
 
         {/* Order Reference Box */}
@@ -158,13 +166,19 @@ export function CheckoutForm({
 
           <div className="pt-3 text-xs text-zinc-600 dark:text-zinc-400 space-y-1">
             <p>
-              <span className="font-medium text-zinc-900 dark:text-zinc-200">Recipient:</span>{" "}
+              <span className="font-medium text-zinc-900 dark:text-zinc-200">
+                Recipient:
+              </span>{" "}
               {completedOrder.shippingAddress.fullName}
             </p>
             <p>
-              <span className="font-medium text-zinc-900 dark:text-zinc-200">Delivery Address:</span>{" "}
-              {completedOrder.shippingAddress.street}, {completedOrder.shippingAddress.postalCode}{" "}
-              {completedOrder.shippingAddress.city}, {completedOrder.shippingAddress.country}
+              <span className="font-medium text-zinc-900 dark:text-zinc-200">
+                Delivery Address:
+              </span>{" "}
+              {completedOrder.shippingAddress.street},{" "}
+              {completedOrder.shippingAddress.postalCode}{" "}
+              {completedOrder.shippingAddress.city},{" "}
+              {completedOrder.shippingAddress.country}
             </p>
           </div>
         </div>
@@ -319,9 +333,17 @@ export function CheckoutForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { id: "credit_card", label: "Credit Card", desc: "Simulated Visa/MC" },
+            {
+              id: "credit_card",
+              label: "Credit Card",
+              desc: "Simulated Visa/MC",
+            },
             { id: "paypal", label: "PayPal", desc: "Instant checkout" },
-            { id: "apple_pay", label: "Apple Pay", desc: "One-click authorization" },
+            {
+              id: "apple_pay",
+              label: "Apple Pay",
+              desc: "One-click authorization",
+            },
           ].map((method) => {
             const isSelected = paymentMethod === method.id;
             return (
@@ -347,7 +369,9 @@ export function CheckoutForm({
                     }`}
                   />
                 </div>
-                <span className="text-[10px] text-zinc-400 mt-1">{method.desc}</span>
+                <span className="text-[10px] text-zinc-400 mt-1">
+                  {method.desc}
+                </span>
               </button>
             );
           })}
@@ -356,7 +380,8 @@ export function CheckoutForm({
         <div className="mt-4 flex items-center gap-2 text-[11px] text-zinc-500 bg-zinc-50/70 dark:bg-zinc-950/50 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800">
           <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>
-            Demonstration checkout flow. All transactions are simulated client-side with zero actual charges.
+            Demonstration checkout flow. All transactions are simulated
+            client-side with zero actual charges.
           </span>
         </div>
       </div>

@@ -17,9 +17,10 @@ export function generateOrderReference(): string {
 /**
  * Validates mandatory customer details and shipping address fields.
  */
-export function validateShippingAddress(
-  address: Partial<ShippingAddress>,
-): { isValid: boolean; errors: AddressValidationErrors } {
+export function validateShippingAddress(address: Partial<ShippingAddress>): {
+  isValid: boolean;
+  errors: AddressValidationErrors;
+} {
   const errors: AddressValidationErrors = {};
 
   // Full Name
@@ -46,7 +47,8 @@ export function validateShippingAddress(
   // Postal Code (alphanumeric, 3 to 10 characters)
   const postalRegex = /^[a-zA-Z0-9\s-]{3,10}$/;
   if (!address.postalCode || !postalRegex.test(address.postalCode.trim())) {
-    errors.postalCode = "Valid postal/ZIP code is required (3 to 10 characters).";
+    errors.postalCode =
+      "Valid postal/ZIP code is required (3 to 10 characters).";
   }
 
   // Country
