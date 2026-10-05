@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
+import { Breadcrumbs } from "@/components/storefront/Breadcrumbs";
 import { calculateOrderTotals } from "@/lib/orders";
 import {
   Lock,
@@ -83,6 +84,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950 py-10">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs className="mb-2" />
         {/* Header Breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <div>

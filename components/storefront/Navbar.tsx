@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { StorefrontBanner } from "@/components/storefront/StorefrontBanner";
 
 interface NavbarProps {
   cartItemCount?: number;
@@ -49,6 +51,17 @@ export default function Navbar({
   const handleLoginClick = onLoginClick || (() => openAuthModal("login"));
   const handleLogoutClick = onLogoutClick || logout;
 
+  const pathname = usePathname();
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : Boolean(pathname?.startsWith(href));
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/catalog", label: "Catalog" },
+    { href: "/categories", label: "Categories" },
+    { href: "/about", label: "About" },
+  ];
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -68,47 +81,42 @@ export default function Navbar({
   }, [isUserDropdownOpen]);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-900 text-white font-semibold text-sm dark:bg-zinc-100 dark:text-zinc-950">
-              A
-            </div>
-            <span className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              AuraStore
-            </span>
-          </Link>
+    <>
+      <StorefrontBanner />
+      <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Brand / Logo */}
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-900 text-white font-semibold text-sm dark:bg-zinc-100 dark:text-zinc-950">
+                A
+              </div>
+              <span className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                AuraStore
+              </span>
+            </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-300">
-            <Link
-              href="/"
-              className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-50"
-            >
-              Home
-            </Link>
-            <Link
-              href="/catalog"
-              className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-50"
-            >
-              Catalog
-            </Link>
-            <Link
-              href="/categories"
-              className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-50"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/about"
-              className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-50"
-            >
-              About
-            </Link>
-          </nav>
-        </div>
+            {/* Desktop Navigation Links with Active Indicators */}
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+              {navLinks.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`relative py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 rounded-sm ${
+                      active
+                        ? "text-zinc-950 font-semibold dark:text-zinc-50 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-zinc-900 dark:after:bg-zinc-100"
+                        : "text-zinc-600 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-50"
+                    }`}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
         {/* Action Controls: Search, Cart, & Auth */}
         <div className="flex items-center gap-2">
@@ -245,35 +253,25 @@ export default function Navbar({
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="border-t border-zinc-200 bg-white px-4 py-3 md:hidden dark:border-zinc-800 dark:bg-zinc-950">
-          <nav className="flex flex-col gap-2 text-sm font-medium">
-            <Link
-              href="/"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
-            >
-              Home
-            </Link>
-            <Link
-              href="/catalog"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
-            >
-              Catalog
-            </Link>
-            <Link
-              href="/categories"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="rounded-md px-3 py-2 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
-            >
-              About
-            </Link>
+          <nav className="flex flex-col gap-1.5 text-sm font-medium">
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                    active
+                      ? "bg-zinc-100 font-semibold text-zinc-950 dark:bg-zinc-900 dark:text-zinc-50"
+                      : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                  }`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
 
             <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
               {effectiveUserName ? (
@@ -348,5 +346,6 @@ export default function Navbar({
         </DialogContent>
       </Dialog>
     </header>
-  );
+  </>
+);
 }
