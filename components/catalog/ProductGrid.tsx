@@ -21,6 +21,7 @@ interface ProductGridProps {
   title?: string;
   subtitle?: string;
   filterSlot?: React.ReactNode;
+  paginationSlot?: React.ReactNode;
 }
 
 export function ProductGrid({
@@ -28,6 +29,7 @@ export function ProductGrid({
   title = "Curated Catalog",
   subtitle = "Precision engineered hardware and workplace essentials.",
   filterSlot,
+  paginationSlot,
 }: ProductGridProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [dialogAdded, setDialogAdded] = useState(false);
@@ -96,6 +98,8 @@ export function ProductGrid({
             ))}
           </div>
         )}
+
+        {paginationSlot}
       </div>
 
       {/* Quick View Dialog */}

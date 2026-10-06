@@ -33,13 +33,13 @@ export function StorefrontBanner() {
       className="relative z-50 flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-100 sm:px-6 lg:px-8"
     >
       <div className="flex flex-1 items-center justify-center gap-2 text-center">
-        <Sparkles className="h-3.5 w-3.5 text-zinc-400 hidden sm:inline-block" />
-        <span className="font-medium text-white">
-          Sprint 2 Launch Offer:
-        </span>
+        <span className="font-medium text-white">Sprint 2 Launch Offer:</span>
         <span className="text-zinc-300">
-          Complimentary standard shipping across Germany on orders over €50. Use code{" "}
-          <strong className="font-semibold text-white tracking-wide">FREESHIP</strong>
+          Complimentary standard shipping across Germany on orders over €50. Use
+          code{" "}
+          <strong className="font-semibold text-white tracking-wide">
+            FREESHIP
+          </strong>
         </span>
       </div>
 
@@ -54,4 +54,3 @@ export function StorefrontBanner() {
     </aside>
   );
 }
-
