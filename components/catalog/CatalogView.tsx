@@ -9,10 +9,17 @@ import {
 } from "@/components/search/CategoryPills";
 import { SearchInput } from "@/components/search/SearchInput";
 import {
+  RecentSearches,
+  getRecentSearches,
+  saveRecentSearch,
+  clearRecentSearches,
+} from "@/components/search/RecentSearches";
+import {
   CatalogSortSelect,
   SortOption,
 } from "@/components/catalog/CatalogSortSelect";
 import { CatalogPagination } from "@/components/catalog/CatalogPagination";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface CatalogViewProps {
   products: Product[];
@@ -25,14 +32,19 @@ export function CatalogView({ products }: CatalogViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("featured");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  // Sync state from URL parameters on initial client mount (SCRUM-53)
+  // Throttled debounced query (300ms delay) to prevent excessive re-renders (SCRUM-55)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Sync state from URL parameters on initial client mount (SCRUM-53) and load recent searches (SCRUM-56)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const urlCategory = params.get("category");
       const urlSort = params.get("sort") as SortOption | null;
       const urlPage = params.get("page");
+      const urlQuery = params.get("q");
 
       if (urlCategory) {
         setSelectedCategory(urlCategory);
@@ -48,11 +60,25 @@ export function CatalogView({ products }: CatalogViewProps) {
       if (urlPage && !isNaN(Number(urlPage))) {
         setCurrentPage(Math.max(1, parseInt(urlPage, 10)));
       }
+      if (urlQuery) {
+        setSearchQuery(urlQuery);
+      }
+
+      setRecentSearches(getRecentSearches());
     }
   }, []);
 
+  // Save debounced non-empty search terms to recent cache (SCRUM-56)
+  useEffect(() => {
+    const trimmed = debouncedSearchQuery.trim();
+    if (trimmed.length >= 2) {
+      saveRecentSearch(trimmed);
+      setRecentSearches(getRecentSearches());
+    }
+  }, [debouncedSearchQuery]);
+
   const updateUrlParams = useCallback(
-    (newCategory: string, newSort: SortOption, newPage: number) => {
+    (newCategory: string, newSort: SortOption, newPage: number, newQuery: string) => {
       if (typeof window !== "undefined") {
         const params = new URLSearchParams();
         if (newCategory !== "All") {
@@ -63,6 +89,9 @@ export function CatalogView({ products }: CatalogViewProps) {
         }
         if (newPage > 1) {
           params.set("page", newPage.toString());
+        }
+        if (newQuery.trim()) {
+          params.set("q", newQuery.trim());
         }
         const queryString = params.toString();
         const newUrl = queryString
@@ -79,7 +108,7 @@ export function CatalogView({ products }: CatalogViewProps) {
       new Set(products.map((p) => p.category)),
     ).sort();
 
-    const trimmedQuery = searchQuery.trim().toLowerCase();
+    const trimmedQuery = debouncedSearchQuery.trim().toLowerCase();
     const queryMatchedProducts = !trimmedQuery
       ? products
       : products.filter(
@@ -96,14 +125,14 @@ export function CatalogView({ products }: CatalogViewProps) {
         count: queryMatchedProducts.filter((p) => p.category === cat).length,
       })),
     ];
-  }, [products, searchQuery]);
+  }, [products, debouncedSearchQuery]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesCategory =
         selectedCategory === "All" || product.category === selectedCategory;
 
-      const trimmedQuery = searchQuery.trim().toLowerCase();
+      const trimmedQuery = debouncedSearchQuery.trim().toLowerCase();
       const matchesSearch =
         !trimmedQuery ||
         product.name.toLowerCase().includes(trimmedQuery) ||
@@ -112,7 +141,7 @@ export function CatalogView({ products }: CatalogViewProps) {
 
       return matchesCategory && matchesSearch;
     });
-  }, [products, selectedCategory, searchQuery]);
+  }, [products, selectedCategory, debouncedSearchQuery]);
 
   // Apply sorting algorithm (SCRUM-51)
   const sortedProducts = useMemo(() => {
@@ -148,22 +177,32 @@ export function CatalogView({ products }: CatalogViewProps) {
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
     setCurrentPage(1);
-    updateUrlParams(category, sortOption, 1);
+    updateUrlParams(category, sortOption, 1, searchQuery);
   };
 
   const handleSortChange = (newSort: SortOption) => {
     setSortOption(newSort);
     setCurrentPage(1);
-    updateUrlParams(selectedCategory, newSort, 1);
+    updateUrlParams(selectedCategory, newSort, 1, searchQuery);
   };
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-    updateUrlParams(selectedCategory, sortOption, newPage);
-    // Smooth scroll to top of catalog section on page transition
+    updateUrlParams(selectedCategory, sortOption, newPage, searchQuery);
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
+
+  const handleSelectRecentSearch = (term: string) => {
+    setSearchQuery(term);
+    setCurrentPage(1);
+    updateUrlParams(selectedCategory, sortOption, 1, term);
+  };
+
+  const handleClearRecent = () => {
+    clearRecentSearches();
+    setRecentSearches([]);
   };
 
   const handleResetFilters = () => {
@@ -171,7 +210,7 @@ export function CatalogView({ products }: CatalogViewProps) {
     setSearchQuery("");
     setSortOption("featured");
     setCurrentPage(1);
-    updateUrlParams("All", "featured", 1);
+    updateUrlParams("All", "featured", 1, "");
   };
 
   const hasActiveFilters =
@@ -199,7 +238,7 @@ export function CatalogView({ products }: CatalogViewProps) {
         title={selectedCategory === "All" ? "All Products" : selectedCategory}
         subtitle={subtitle}
         filterSlot={
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <SearchInput
@@ -207,6 +246,11 @@ export function CatalogView({ products }: CatalogViewProps) {
                   onChange={(val) => {
                     setSearchQuery(val);
                     setCurrentPage(1);
+                    updateUrlParams(selectedCategory, sortOption, 1, val);
+                  }}
+                  onSubmit={(val) => {
+                    saveRecentSearch(val);
+                    setRecentSearches(getRecentSearches());
                   }}
                   className="max-w-md"
                 />
@@ -227,6 +271,13 @@ export function CatalogView({ products }: CatalogViewProps) {
                 </button>
               )}
             </div>
+
+            {/* Recent Searches chips cache */}
+            <RecentSearches
+              searches={recentSearches}
+              onSelectSearch={handleSelectRecentSearch}
+              onClearRecent={handleClearRecent}
+            />
 
             <CategoryPills
               categories={categories}
