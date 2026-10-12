@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { CartItemRow } from "@/components/cart/CartItemRow";
+import { calculateOrderTotals } from "@/lib/orders";
 import {
   Sheet,
   SheetContent,
@@ -17,13 +17,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  Plus,
-  Minus,
-  Trash2,
   ShoppingBag,
   ArrowRight,
   Lock,
+  Truck,
+  CheckCircle2,
 } from "lucide-react";
+
+const FREE_SHIPPING_THRESHOLD = 100;
 
 export function CartDrawer() {
   const router = useRouter();
@@ -38,6 +39,16 @@ export function CartDrawer() {
     totalItems,
     subtotal,
   } = useCart();
+
+  const totals = calculateOrderTotals(subtotal);
+  const remainingForFreeShipping = Math.max(
+    0,
+    FREE_SHIPPING_THRESHOLD - totals.subtotal,
+  );
+  const shippingProgressPercent = Math.min(
+    100,
+    Math.round((totals.subtotal / FREE_SHIPPING_THRESHOLD) * 100),
+  );
 
   const handleProceedToCheckout = () => {
     setIsCartOpen(false);
@@ -94,81 +105,45 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            {/* Scrollable Item List */}
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-              {items.map((item) => (
+            {/* Free Shipping Tier Progress Bar */}
+            <div className="border-b border-zinc-100 bg-zinc-50/70 px-6 py-3 dark:border-zinc-900 dark:bg-zinc-900/40">
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                {remainingForFreeShipping === 0 ? (
+                  <span className="flex items-center gap-1.5 font-medium text-zinc-900 dark:text-zinc-100">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-zinc-900 dark:text-zinc-100" />
+                    Complimentary standard shipping unlocked
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+                    <Truck className="h-3.5 w-3.5 text-zinc-500" />
+                    Add{" "}
+                    <strong className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+                      ${remainingForFreeShipping.toFixed(2)}
+                    </strong>{" "}
+                    more for free shipping
+                  </span>
+                )}
+                <span className="font-mono text-[11px] text-zinc-500">
+                  {shippingProgressPercent}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
                 <div
+                  className="h-full rounded-full bg-zinc-900 transition-all duration-300 dark:bg-zinc-100"
+                  style={{ width: `${shippingProgressPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Scrollable Item List */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+              {items.map((item) => (
+                <CartItemRow
                   key={item.product.id}
-                  className="flex gap-4 rounded-lg border border-zinc-100 p-3 dark:border-zinc-900 bg-zinc-50/50 dark:bg-zinc-900/30"
-                >
-                  {/* Thumbnail */}
-                  <div className="relative h-18 w-18 shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800">
-                    <Image
-                      src={item.product.image}
-                      alt={item.product.name}
-                      fill
-                      sizes="72px"
-                      className="object-cover"
-                    />
-                  </div>
-
-                  {/* Info & Quantity Modifiers */}
-                  <div className="flex flex-1 flex-col justify-between min-w-0">
-                    <div>
-                      <div className="flex items-start justify-between gap-2">
-                        <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                          {item.product.name}
-                        </h4>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.product.id)}
-                          className="text-zinc-400 hover:text-red-500 transition-colors cursor-pointer p-0.5"
-                          title="Remove item"
-                          aria-label={`Remove ${item.product.name}`}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-                        {item.product.category}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-2">
-                      {/* Quantity Stepper */}
-                      <div className="flex items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateQuantity(item.product.id, item.quantity - 1)
-                          }
-                          className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="w-7 text-center text-xs font-medium text-zinc-900 dark:text-zinc-100">
-                          {item.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateQuantity(item.product.id, item.quantity + 1)
-                          }
-                          className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
-                      </div>
-
-                      {/* Item Total */}
-                      <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                        ${(item.product.price * item.quantity).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  item={item}
+                  onUpdateQuantity={updateQuantity}
+                  onRemove={removeItem}
+                />
               ))}
 
               <div className="pt-2 flex justify-end">
@@ -182,22 +157,39 @@ export function CartDrawer() {
               </div>
             </div>
 
-            {/* Sticky Drawer Footer */}
+            {/* Sticky Drawer Footer with Dynamic Pricing Breakdown */}
             <SheetFooter className="border-t border-zinc-200 px-6 py-4 dark:border-zinc-800 flex flex-col gap-3">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                  <span>Shipping & taxes</span>
-                  <span>Calculated at checkout</span>
-                </div>
-                <div className="flex items-center justify-between text-sm font-bold text-zinc-900 dark:text-zinc-100">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span className="font-mono text-zinc-700 dark:text-zinc-300">
+                    ${totals.subtotal.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+                  <span>Estimated shipping</span>
+                  <span className="font-mono text-zinc-700 dark:text-zinc-300">
+                    {totals.shippingCost === 0
+                      ? "Free"
+                      : `$${totals.shippingCost.toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+                  <span>Estimated tax (8%)</span>
+                  <span className="font-mono text-zinc-700 dark:text-zinc-300">
+                    ${totals.tax.toFixed(2)}
+                  </span>
+                </div>
+
+                <Separator className="my-2 bg-zinc-200 dark:bg-zinc-800" />
+
+                <div className="flex items-center justify-between text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  <span>Estimated Total</span>
+                  <span className="font-mono">${totals.total.toFixed(2)}</span>
                 </div>
               </div>
 
-              <Separator className="my-1 bg-zinc-200 dark:bg-zinc-800" />
-
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 pt-1">
                 <Button
                   onClick={handleProceedToCheckout}
                   className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium flex items-center justify-center gap-1.5 cursor-pointer"
