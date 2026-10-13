@@ -3,6 +3,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User, StoredUser } from "@/types/auth";
 
+export const RFC5322_EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -13,6 +16,7 @@ interface AuthContextType {
   login: (
     email: string,
     password: string,
+    rememberMe?: boolean,
   ) => Promise<{ success: boolean; error?: string }>;
   register: (
     name: string,
@@ -29,6 +33,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const USERS_STORAGE_KEY = "aurastore_users";
 const SESSION_STORAGE_KEY = "aurastore_session";
+const DEFAULT_SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const EXTENDED_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function createSessionToken(userId: string): string {
+  const randomPart = Math.random().toString(36).substring(2, 10);
+  const timePart = Date.now().toString(36);
+  return `tok_${userId.replace(/[^a-zA-Z0-9]/g, "")}_${timePart}_${randomPart}`;
+}
 
 // Pre-seeded default users
 const INITIAL_USERS: StoredUser[] = [
@@ -55,20 +67,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [authRedirectUrl, setAuthRedirectUrl] = useState<string | null>(null);
 
-  // Initialize users and active session from localStorage
+  // Initialize users and active session from localStorage with expiry check
   useEffect(() => {
     try {
-      // Check stored registered users
       const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
       if (!storedUsers) {
         localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(INITIAL_USERS));
       }
 
-      // Check existing active session
       const storedSession = localStorage.getItem(SESSION_STORAGE_KEY);
       if (storedSession) {
-        const parsedUser = JSON.parse(storedSession);
+        const parsedUser: User = JSON.parse(storedSession);
         if (parsedUser && parsedUser.id && parsedUser.email) {
+          if (parsedUser.expiresAt) {
+            const expiryTime = new Date(parsedUser.expiresAt).getTime();
+            if (Number.isFinite(expiryTime) && Date.now() > expiryTime) {
+              localStorage.removeItem(SESSION_STORAGE_KEY);
+              setUser(null);
+              return;
+            }
+          }
           setUser(parsedUser);
         }
       }
@@ -94,8 +112,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (
     email: string,
     password: string,
+    rememberMe = false,
   ): Promise<{ success: boolean; error?: string }> => {
     const trimmedEmail = email.trim().toLowerCase();
+    if (!RFC5322_EMAIL_REGEX.test(trimmedEmail)) {
+      return {
+        success: false,
+        error: "Please enter a valid RFC 5322 email address.",
+      };
+    }
+
+    // Brief verification pause for visual feedback
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     const users = getUsers();
     const found = users.find((u) => u.email.toLowerCase() === trimmedEmail);
 
@@ -107,11 +136,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
+    const ttl = rememberMe ? EXTENDED_SESSION_TTL_MS : DEFAULT_SESSION_TTL_MS;
     const sessionUser: User = {
       id: found.id,
       name: found.name,
       email: found.email,
       createdAt: found.createdAt,
+      sessionToken: createSessionToken(found.id),
+      expiresAt: new Date(Date.now() + ttl).toISOString(),
     };
 
     setUser(sessionUser);
@@ -133,11 +165,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const trimmedName = name.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
-    if (!trimmedName) {
-      return { success: false, error: "Full name is required." };
+    if (!trimmedName || trimmedName.length < 2) {
+      return {
+        success: false,
+        error: "Full name must be at least 2 characters.",
+      };
     }
-    if (!trimmedEmail || !trimmedEmail.includes("@")) {
-      return { success: false, error: "A valid email address is required." };
+    if (!RFC5322_EMAIL_REGEX.test(trimmedEmail)) {
+      return {
+        success: false,
+        error: "Please enter a valid RFC 5322 email address.",
+      };
     }
     if (password.length < 8) {
       return {
@@ -145,6 +183,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         error: "Password must be at least 8 characters in length.",
       };
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     const users = getUsers();
     const existing = users.find((u) => u.email.toLowerCase() === trimmedEmail);
@@ -176,6 +216,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       name: newUser.name,
       email: newUser.email,
       createdAt: newUser.createdAt,
+      sessionToken: createSessionToken(newUser.id),
+      expiresAt: new Date(Date.now() + DEFAULT_SESSION_TTL_MS).toISOString(),
     };
 
     setUser(sessionUser);

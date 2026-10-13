@@ -3,6 +3,8 @@ export interface User {
   name: string;
   email: string;
   createdAt: string;
+  sessionToken?: string;
+  expiresAt?: string;
 }
 
 export interface StoredUser extends User {

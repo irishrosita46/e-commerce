@@ -102,18 +102,27 @@ export default function CheckoutPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Customer Session Card */}
             <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold text-sm">
-                  {user?.name?.charAt(0) || "U"}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold text-sm">
+                    {user?.name?.charAt(0) || "U"}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                      Logged in as {user?.name}
+                    </h3>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Account email: {user?.email}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    Logged in as {user?.name}
-                  </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Account email: {user?.email}
-                  </p>
-                </div>
+                <Badge
+                  variant="secondary"
+                  className="bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50 text-[11px] font-medium flex items-center gap-1"
+                >
+                  <CheckCircle2 className="h-3 w-3" />
+                  Session Active
+                </Badge>
               </div>
             </div>
 

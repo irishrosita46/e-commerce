@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth, RFC5322_EMAIL_REGEX } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, AlertCircle, Sparkles } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -15,6 +15,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,19 +30,24 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
       setError("Please enter your email address.");
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
-      setError("Please enter a valid email address (e.g. name@example.com).");
+    if (!RFC5322_EMAIL_REGEX.test(trimmedEmail)) {
+      setError(
+        "Please enter a valid RFC 5322 email address (e.g. name@example.com).",
+      );
       return;
     }
     if (!password) {
       setError("Please enter your password.");
       return;
     }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      const res = await login(trimmedEmail, password);
+      const res = await login(trimmedEmail, password, rememberMe);
       if (!res.success) {
         setError(res.error || "Authentication failed.");
       } else if (onSuccess) {
@@ -61,7 +67,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4">
       {error && (
         <div className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50/80 p-3 text-xs text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
@@ -78,7 +84,10 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           type="email"
           placeholder="name@example.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (error) setError(null);
+          }}
           autoComplete="email"
           required
           className="h-10 text-xs border-zinc-200 dark:border-zinc-800"
@@ -97,7 +106,10 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (error) setError(null);
+            }}
             autoComplete="current-password"
             required
             className="h-10 pr-9 text-xs border-zinc-200 dark:border-zinc-800"
@@ -117,13 +129,33 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
         </div>
       </div>
 
+      {/* Session Persistence Toggle */}
+      <div className="flex items-center justify-between pt-0.5">
+        <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 dark:border-zinc-700 cursor-pointer"
+          />
+          <span>Keep me signed in for 7 days</span>
+        </label>
+      </div>
+
       {/* Submit Button */}
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium"
+        className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium cursor-pointer"
       >
-        {isSubmitting ? "Signing in..." : "Sign in to account"}
+        {isSubmitting ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Verifying credentials...
+          </span>
+        ) : (
+          "Sign in to account"
+        )}
       </Button>
 
       {/* Demo Credentials Quick Fill */}
@@ -133,7 +165,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           variant="outline"
           size="sm"
           onClick={handleFillDemo}
-          className="w-full text-[11px] h-8 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+          className="w-full text-[11px] h-8 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer"
         >
           Demo account (customer@aurastore.com)
         </Button>
