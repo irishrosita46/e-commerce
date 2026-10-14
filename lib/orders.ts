@@ -2,6 +2,9 @@ import { Order, ShippingAddress, AddressValidationErrors } from "@/types/order";
 
 const ORDERS_STORAGE_KEY = "aurastore_orders";
 
+export const RFC5322_EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
 /**
  * Generates an uppercase unique order reference code following the format ORD-2026-XXXX.
  */
@@ -24,35 +27,52 @@ export function validateShippingAddress(address: Partial<ShippingAddress>): {
   const errors: AddressValidationErrors = {};
 
   // Full Name
-  if (!address.fullName || address.fullName.trim().length < 2) {
+  const fullName = address.fullName?.trim() || "";
+  if (!fullName || fullName.length < 2) {
     errors.fullName = "Full name is required (minimum 2 characters).";
   }
 
-  // Email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!address.email || !emailRegex.test(address.email.trim())) {
+  // Email format validation (strict RFC 5322)
+  const email = address.email?.trim() || "";
+  if (!email || !RFC5322_EMAIL_REGEX.test(email)) {
     errors.email = "A valid email address is required for order confirmation.";
   }
 
-  // Street Address
-  if (!address.street || address.street.trim().length < 5) {
+  // Street Address: minimum 5 characters, should contain a house/street number
+  const street = address.street?.trim() || "";
+  if (!street || street.length < 5) {
     errors.street = "Street address is required (minimum 5 characters).";
+  } else if (!/\d/.test(street)) {
+    errors.street = "Please include a street number (e.g. Dessauer Str. 3-5).";
   }
 
   // City
-  if (!address.city || address.city.trim().length < 2) {
-    errors.city = "City is required.";
+  const city = address.city?.trim() || "";
+  if (!city || city.length < 2) {
+    errors.city = "City is required (minimum 2 characters).";
   }
 
-  // Postal Code (alphanumeric, 3 to 10 characters)
-  const postalRegex = /^[a-zA-Z0-9\s-]{3,10}$/;
-  if (!address.postalCode || !postalRegex.test(address.postalCode.trim())) {
-    errors.postalCode =
-      "Valid postal/ZIP code is required (3 to 10 characters).";
+  // Country & Postal Code validation
+  const country = address.country?.trim() || "Germany";
+  const postalCode = address.postalCode?.trim() || "";
+
+  if (!postalCode) {
+    errors.postalCode = "Postal / ZIP code is required.";
+  } else if (country === "Germany" || country === "Austria") {
+    // 5-digit postal code for Germany and Austria
+    if (!/^[0-9]{5}$/.test(postalCode)) {
+      errors.postalCode = `Please enter a valid 5-digit postal code for ${country} (e.g. 10963).`;
+    }
+  } else if (country === "Switzerland") {
+    if (!/^[0-9]{4}$/.test(postalCode)) {
+      errors.postalCode = "Please enter a valid 4-digit Swiss postal code.";
+    }
+  } else if (!/^[a-zA-Z0-9\s-]{3,10}$/.test(postalCode)) {
+    errors.postalCode = "Valid postal/ZIP code is required (3 to 10 characters).";
   }
 
   // Country
-  if (!address.country || address.country.trim().length < 2) {
+  if (!country || country.length < 2) {
     errors.country = "Destination country must be selected.";
   }
 
@@ -72,7 +92,7 @@ export function calculateOrderTotals(subtotal: number): {
   total: number;
 } {
   const roundedSubtotal = Math.round(subtotal * 100) / 100;
-  const shippingCost = roundedSubtotal >= 100 || roundedSubtotal === 0 ? 0 : 15;
+  const shippingCost = roundedSubtotal >= 100 || roundedSubtotal === 0 ? 0 : 9.99;
   const tax = Math.round(roundedSubtotal * 0.08 * 100) / 100;
   const total = Math.round((roundedSubtotal + shippingCost + tax) * 100) / 100;
 
