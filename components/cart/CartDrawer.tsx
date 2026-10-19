@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { CartItemRow } from "@/components/cart/CartItemRow";
-import { calculateOrderTotals } from "@/lib/orders";
+import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from "@/lib/orders";
 import {
   Sheet,
   SheetContent,
@@ -23,8 +23,6 @@ import {
   Truck,
   CheckCircle2,
 } from "lucide-react";
-
-const FREE_SHIPPING_THRESHOLD = 100;
 
 export function CartDrawer() {
   const router = useRouter();

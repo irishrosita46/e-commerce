@@ -130,5 +130,50 @@
     "image": "https://images.unsplash.com/photo-1587749091230-fb8a034d695c?q=80&w=880&auto=format&fit=crop",
     "inStock": true,
     "featured": false
+  },
+  {
+    "id": "prod-013",
+    "name": "MagCharge GaN 100W Travel Adapter",
+    "tagline": "Ultra-compact Gallium Nitride 4-port fast charging.",
+    "description": "High-efficiency Gallium Nitride architecture delivering up to 100W Power Delivery across dual USB-C and dual USB-A ports. Features dynamic power allocation and over-voltage safeguards.",
+    "price": 69.0,
+    "category": "Power & Charging",
+    "image": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80",
+    "inStock": true,
+    "featured": true
+  },
+  {
+    "id": "prod-014",
+    "name": "Kevlar Braided USB-C Cable (2m)",
+    "tagline": "Reinforced double-braided aramid fiber rated for 50,000 bends.",
+    "description": "Certified for 240W USB Power Delivery and 40Gbps Thunderbolt data transmission. Anodized aluminum housing with integrated silicone cable organizer.",
+    "price": 29.0,
+    "category": "Power & Charging",
+    "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "inStock": true,
+    "featured": false
+  },
+  {
+    "id": "prod-015",
+    "name": "Aura Thermal Insulated Tumbler (500ml)",
+    "tagline": "Double-walled vacuum insulated ceramic-lined vessel.",
+    "description": "Engineered with 18/8 kitchen-grade stainless steel and an internal ceramic coating to eliminate metallic taste. Keeps beverages hot for 12 hours or ice-cold for 24 hours.",
+    "price": 39.0,
+    "category": "Drinkware",
+    "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
+    "inStock": true,
+    "featured": true
+  },
+  {
+    "id": "prod-016",
+    "name": "Minimalist Borosilicate Glass Pitcher",
+    "tagline": "Heat-resistant laboratory-grade glassware with stainless filter.",
+    "description": "Hand-blown thermal shock resistant borosilicate glass with an ergonomic integrated pouring spout and laser-etched precision capacity markings.",
+    "price": 45.0,
+    "category": "Drinkware",
+    "image": "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?auto=format&fit=crop&w=800&q=80",
+    "inStock": true,
+    "featured": false
   }
 ]
+

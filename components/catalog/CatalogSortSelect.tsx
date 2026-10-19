@@ -40,7 +40,11 @@ export function CatalogSortSelect({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click or escape key
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Close dropdown on outside click or escape key, and handle arrow navigation
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -52,8 +56,25 @@ export function CatalogSortSelect({
     }
 
     function handleKeyDown(event: KeyboardEvent) {
+      if (!isOpen) return;
+
       if (event.key === "Escape") {
         setIsOpen(false);
+        triggerRef.current?.focus();
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setFocusedIndex((prev) => {
+          const next = prev < SORT_OPTIONS.length - 1 ? prev + 1 : 0;
+          optionRefs.current[next]?.focus();
+          return next;
+        });
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setFocusedIndex((prev) => {
+          const next = prev > 0 ? prev - 1 : SORT_OPTIONS.length - 1;
+          optionRefs.current[next]?.focus();
+          return next;
+        });
       }
     }
 
@@ -70,6 +91,7 @@ export function CatalogSortSelect({
   const handleSelect = (option: SortOption) => {
     onChange(option);
     setIsOpen(false);
+    triggerRef.current?.focus();
   };
 
   return (
@@ -83,6 +105,7 @@ export function CatalogSortSelect({
 
       {/* Trigger Button: Exactly matching SearchInput height (h-10), text-sm and styling */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="listbox"
@@ -120,16 +143,20 @@ export function CatalogSortSelect({
             : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
         }`}
       >
-        {SORT_OPTIONS.map((opt) => {
+        {SORT_OPTIONS.map((opt, idx) => {
           const isSelected = value === opt.value;
           return (
             <button
               key={opt.value}
+              ref={(el) => {
+                optionRefs.current[idx] = el;
+              }}
               type="button"
               role="option"
               aria-selected={isSelected}
+              tabIndex={isOpen ? 0 : -1}
               onClick={() => handleSelect(opt.value)}
-              className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors cursor-pointer ${
+              className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors cursor-pointer focus:outline-none focus:bg-zinc-100 dark:focus:bg-zinc-900 ${
                 isSelected
                   ? "bg-zinc-100 text-zinc-950 font-semibold dark:bg-zinc-900 dark:text-zinc-50"
                   : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/60 dark:hover:text-zinc-100"

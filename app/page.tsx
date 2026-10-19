@@ -108,6 +108,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Categories Showcase */}
+      <section className="py-12 border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/30 dark:bg-zinc-900/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Shop by Category
+              </h2>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                Explore our six engineered product families designed for focused productivity.
+              </p>
+            </div>
+            <Link
+              href="/categories"
+              className="mt-3 sm:mt-0 text-xs font-semibold text-zinc-900 dark:text-zinc-100 hover:underline flex items-center gap-1"
+            >
+              <span>Explore all categories</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {[
+              { name: "Audio", count: 3, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" },
+              { name: "Desk Accessories", count: 5, image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=400&q=80" },
+              { name: "Lighting", count: 2, image: "https://images.unsplash.com/photo-1534349762230-e0cadf78f5da?auto=format&fit=crop&w=400&q=80" },
+              { name: "Wearables", count: 2, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80" },
+              { name: "Power & Charging", count: 2, image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=400&q=80" },
+              { name: "Drinkware", count: 2, image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80" },
+            ].map((cat) => (
+              <Link
+                key={cat.name}
+                href={`/catalog?category=${encodeURIComponent(cat.name)}`}
+                className="group relative overflow-hidden rounded-lg border border-zinc-200 bg-white p-3 hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700 transition-all duration-200"
+              >
+                <div className="relative h-24 w-full overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-900 mb-2.5">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
+                  {cat.name}
+                </h3>
+                <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
+                  {cat.count} items
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Catalog Section */}
       <ProductGrid
         products={featuredProducts}

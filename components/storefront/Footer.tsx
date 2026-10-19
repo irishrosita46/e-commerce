@@ -47,6 +47,22 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="/categories"
+                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                >
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about"
+                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                >
+                  About AuraStore
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/cart"
                   className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >

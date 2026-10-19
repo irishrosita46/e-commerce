@@ -82,6 +82,8 @@ export function validateShippingAddress(address: Partial<ShippingAddress>): {
   };
 }
 
+export const FREE_SHIPPING_THRESHOLD = 100;
+
 /**
  * Calculates pricing breakdown with free standard shipping over $100.
  */
@@ -92,7 +94,10 @@ export function calculateOrderTotals(subtotal: number): {
   total: number;
 } {
   const roundedSubtotal = Math.round(subtotal * 100) / 100;
-  const shippingCost = roundedSubtotal >= 100 || roundedSubtotal === 0 ? 0 : 9.99;
+  const shippingCost =
+    roundedSubtotal >= FREE_SHIPPING_THRESHOLD || roundedSubtotal === 0
+      ? 0
+      : 9.99;
   const tax = Math.round(roundedSubtotal * 0.08 * 100) / 100;
   const total = Math.round((roundedSubtotal + shippingCost + tax) * 100) / 100;
 

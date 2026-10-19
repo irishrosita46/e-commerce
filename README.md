@@ -23,7 +23,6 @@ In accordance with course guidelines, every student owns and develops a dedicate
 | **Sahibpreet Singh**       | `sahibpreet@ue-germany.de`            | Developer           | Storefront Shell, Navigation & Checkout Data Contracts    |
 | **Varrel Omar Farazi**     | `varrel.farazi@ue-germany.de`         | Product Owner & Dev | Catalog Product Grid, Category Filters & Search Queries   |
 | **Kaya Demiray**           | `kaya.demiray@ue-germany.de`          | Developer           | Shopping Cart, Badge Counter & Price Calculations         |
-| **Chukwuemeka Joel Offor** | `chukwuemekajoel.offor@ue-germany.de` | Developer           | Product Ratings, Advanced Filters & Inventory (Sprint 2+) |
 
 ---
 
