@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, Plus, Check } from "lucide-react";
+import { Package, Plus, Check, AlertCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getProductStock, isLowStock, isOutOfStock } from "@/lib/inventory";
 
 interface ProductGridProps {
   products: Product[];
@@ -40,9 +41,22 @@ export function ProductGrid({
     setDialogAdded(false);
   };
 
+  const selectedProductStock = selectedProduct
+    ? getProductStock(
+        selectedProduct.id,
+        selectedProduct.stock ?? (selectedProduct.inStock ? 10 : 0),
+      )
+    : 0;
+  const isSelectedOutOfStock = isOutOfStock(selectedProductStock);
+  const isSelectedLowStock = isLowStock(selectedProductStock);
+
   const handleDialogAdd = () => {
-    if (!selectedProduct || !selectedProduct.inStock) return;
-    addItem(selectedProduct);
+    if (!selectedProduct || isSelectedOutOfStock) return;
+    addItem({
+      ...selectedProduct,
+      stock: selectedProductStock,
+      inStock: !isSelectedOutOfStock,
+    });
     setDialogAdded(true);
     setTimeout(() => setDialogAdded(false), 1500);
   };
@@ -132,18 +146,29 @@ export function ProductGrid({
                     >
                       {selectedProduct.category}
                     </Badge>
-                    <Badge
-                      variant={
-                        selectedProduct.inStock ? "outline" : "destructive"
-                      }
-                      className={
-                        selectedProduct.inStock
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-medium dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300"
-                          : "text-xs font-medium"
-                      }
-                    >
-                      {selectedProduct.inStock ? "In Stock" : "Out of Stock"}
-                    </Badge>
+                    {isSelectedOutOfStock ? (
+                      <Badge
+                        variant="destructive"
+                        className="bg-zinc-900 text-white text-xs font-medium dark:bg-zinc-100 dark:text-zinc-950"
+                      >
+                        Out of Stock
+                      </Badge>
+                    ) : isSelectedLowStock ? (
+                      <Badge
+                        variant="outline"
+                        className="border-amber-400 bg-amber-50 text-amber-900 text-xs font-semibold dark:border-amber-600/70 dark:bg-amber-950/60 dark:text-amber-200 flex items-center gap-1"
+                      >
+                        <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                        <span>Only {selectedProductStock} left</span>
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-medium dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300"
+                      >
+                        In Stock ({selectedProductStock} available)
+                      </Badge>
+                    )}
                   </div>
 
                   <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-snug">
@@ -172,16 +197,22 @@ export function ProductGrid({
 
                   <Button
                     size="default"
-                    disabled={!selectedProduct.inStock}
+                    disabled={isSelectedOutOfStock}
                     onClick={handleDialogAdd}
-                    className="h-10 px-5 font-medium shrink-0 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors"
+                    className={
+                      dialogAdded
+                        ? "h-10 px-5 font-medium shrink-0 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 transition-colors"
+                        : isSelectedOutOfStock
+                        ? "h-10 px-5 font-medium shrink-0 bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500 cursor-not-allowed"
+                        : "h-10 px-5 font-medium shrink-0 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors"
+                    }
                   >
                     {dialogAdded ? (
                       <>
                         <Check className="mr-1.5 h-4 w-4 text-emerald-400" />
                         Added
                       </>
-                    ) : !selectedProduct.inStock ? (
+                    ) : isSelectedOutOfStock ? (
                       "Unavailable"
                     ) : (
                       <>

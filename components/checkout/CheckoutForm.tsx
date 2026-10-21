@@ -17,6 +17,7 @@ import {
   calculateOrderTotals,
   saveOrder,
 } from "@/lib/orders";
+import { decrementStock } from "@/lib/inventory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -134,6 +135,7 @@ export function CheckoutForm({
         createdAt: new Date().toISOString(),
       };
 
+      decrementStock(newOrder.items);
       saveOrder(newOrder);
       setCompletedOrder(newOrder);
       setIsSubmitting(false);

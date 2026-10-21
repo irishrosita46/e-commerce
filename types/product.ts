@@ -7,5 +7,6 @@ export interface Product {
   category: "Audio" | "Desk Accessories" | "Lighting" | "Wearables" | string;
   image: string;
   inStock: boolean;
+  stock?: number;
   featured?: boolean;
 }

@@ -8,7 +8,8 @@
     "category": "Audio",
     "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 12
   },
   {
     "id": "prod-002",
@@ -19,7 +20,8 @@
     "category": "Desk Accessories",
     "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 3
   },
   {
     "id": "prod-003",
@@ -30,7 +32,8 @@
     "category": "Desk Accessories",
     "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 8
   },
   {
     "id": "prod-004",
@@ -41,7 +44,8 @@
     "category": "Audio",
     "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 4
   },
   {
     "id": "prod-005",
@@ -52,7 +56,8 @@
     "category": "Lighting",
     "image": "https://images.unsplash.com/photo-1534349762230-e0cadf78f5da?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 15
   },
   {
     "id": "prod-006",
@@ -63,7 +68,8 @@
     "category": "Wearables",
     "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 2
   },
   {
     "id": "prod-007",
@@ -74,7 +80,8 @@
     "category": "Desk Accessories",
     "image": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 20
   },
   {
     "id": "prod-008",
@@ -85,7 +92,8 @@
     "category": "Audio",
     "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 6
   },
   {
     "id": "prod-009",
@@ -96,7 +104,8 @@
     "category": "Desk Accessories",
     "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 9
   },
   {
     "id": "prod-010",
@@ -107,7 +116,8 @@
     "category": "Lighting",
     "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 7
   },
   {
     "id": "prod-011",
@@ -118,7 +128,8 @@
     "category": "Wearables",
     "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
     "inStock": false,
-    "featured": false
+    "featured": false,
+    "stock": 0
   },
   {
     "id": "prod-012",
@@ -129,7 +140,8 @@
     "category": "Desk Accessories",
     "image": "https://images.unsplash.com/photo-1587749091230-fb8a034d695c?q=80&w=880&auto=format&fit=crop",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 11
   },
   {
     "id": "prod-013",
@@ -140,7 +152,8 @@
     "category": "Power & Charging",
     "image": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 14
   },
   {
     "id": "prod-014",
@@ -151,7 +164,8 @@
     "category": "Power & Charging",
     "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 25
   },
   {
     "id": "prod-015",
@@ -162,7 +176,8 @@
     "category": "Drinkware",
     "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": true
+    "featured": true,
+    "stock": 3
   },
   {
     "id": "prod-016",
@@ -173,7 +188,7 @@
     "category": "Drinkware",
     "image": "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
-    "featured": false
+    "featured": false,
+    "stock": 5
   }
 ]
-
