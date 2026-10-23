@@ -8,5 +8,6 @@ export interface Product {
   image: string;
   inStock: boolean;
   stock?: number;
+  tags?: string[];
   featured?: boolean;
 }

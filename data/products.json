@@ -9,7 +9,12 @@
     "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 12
+    "stock": 12,
+    "tags": [
+      "wireless",
+      "noise-cancelling",
+      "premium"
+    ]
   },
   {
     "id": "prod-002",
@@ -21,7 +26,12 @@
     "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 3
+    "stock": 3,
+    "tags": [
+      "mechanical",
+      "wireless",
+      "ergonomic"
+    ]
   },
   {
     "id": "prod-003",
@@ -33,7 +43,12 @@
     "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 8
+    "stock": 8,
+    "tags": [
+      "wireless",
+      "ergonomic",
+      "precision"
+    ]
   },
   {
     "id": "prod-004",
@@ -45,7 +60,12 @@
     "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 4
+    "stock": 4,
+    "tags": [
+      "wireless",
+      "portable",
+      "high-fidelity"
+    ]
   },
   {
     "id": "prod-005",
@@ -57,7 +77,12 @@
     "image": "https://images.unsplash.com/photo-1534349762230-e0cadf78f5da?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 15
+    "stock": 15,
+    "tags": [
+      "adjustable",
+      "dimmable",
+      "minimalist"
+    ]
   },
   {
     "id": "prod-006",
@@ -69,7 +94,12 @@
     "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 2
+    "stock": 2,
+    "tags": [
+      "touch-control",
+      "ambient",
+      "rechargeable"
+    ]
   },
   {
     "id": "prod-007",
@@ -81,7 +111,12 @@
     "image": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 20
+    "stock": 20,
+    "tags": [
+      "aluminum",
+      "minimalist",
+      "workspace"
+    ]
   },
   {
     "id": "prod-008",
@@ -93,7 +128,12 @@
     "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 6
+    "stock": 6,
+    "tags": [
+      "fast-charging",
+      "magnetic",
+      "wireless"
+    ]
   },
   {
     "id": "prod-009",
@@ -105,7 +145,12 @@
     "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 9
+    "stock": 9,
+    "tags": [
+      "wool-felt",
+      "waterproof",
+      "protective"
+    ]
   },
   {
     "id": "prod-010",
@@ -117,7 +162,12 @@
     "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 7
+    "stock": 7,
+    "tags": [
+      "sound-isolating",
+      "ultra-light",
+      "compact"
+    ]
   },
   {
     "id": "prod-011",
@@ -129,7 +179,12 @@
     "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
     "inStock": false,
     "featured": false,
-    "stock": 0
+    "stock": 0,
+    "tags": [
+      "leather",
+      "waterproof",
+      "large-desk"
+    ]
   },
   {
     "id": "prod-012",
@@ -141,7 +196,12 @@
     "image": "https://images.unsplash.com/photo-1587749091230-fb8a034d695c?q=80&w=880&auto=format&fit=crop",
     "inStock": true,
     "featured": false,
-    "stock": 11
+    "stock": 11,
+    "tags": [
+      "smart-sync",
+      "ambient",
+      "glare-free"
+    ]
   },
   {
     "id": "prod-013",
@@ -153,7 +213,12 @@
     "image": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 14
+    "stock": 14,
+    "tags": [
+      "health-tracking",
+      "waterproof",
+      "oled"
+    ]
   },
   {
     "id": "prod-014",
@@ -165,7 +230,12 @@
     "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 25
+    "stock": 25,
+    "tags": [
+      "lightweight",
+      "haptic",
+      "minimalist"
+    ]
   },
   {
     "id": "prod-015",
@@ -177,7 +247,12 @@
     "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": true,
-    "stock": 3
+    "stock": 3,
+    "tags": [
+      "mechanical",
+      "compact",
+      "hot-swap"
+    ]
   },
   {
     "id": "prod-016",
@@ -189,6 +264,11 @@
     "image": "https://images.unsplash.com/photo-1577937927133-66ef06acdf18?auto=format&fit=crop&w=800&q=80",
     "inStock": true,
     "featured": false,
-    "stock": 5
+    "stock": 5,
+    "tags": [
+      "noise-cancelling",
+      "usb-c",
+      "voice-focus"
+    ]
   }
 ]
