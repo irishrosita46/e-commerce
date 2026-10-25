@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { CartItemRow } from "@/components/cart/CartItemRow";
-import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from "@/lib/orders";
+import { FreeShippingProgress } from "@/components/cart/FreeShippingProgress";
+import { PromoCodeInput } from "@/components/cart/PromoCodeInput";
 import {
   Sheet,
   SheetContent,
@@ -16,13 +17,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  ShoppingBag,
-  ArrowRight,
-  Lock,
-  Truck,
-  CheckCircle2,
-} from "lucide-react";
+import { ShoppingBag, ArrowRight, Lock } from "lucide-react";
 
 export function CartDrawer() {
   const router = useRouter();
@@ -35,18 +30,11 @@ export function CartDrawer() {
     updateQuantity,
     clearCart,
     totalItems,
-    subtotal,
+    totals,
+    appliedPromo,
+    applyPromoCode,
+    removePromoCode,
   } = useCart();
-
-  const totals = calculateOrderTotals(subtotal);
-  const remainingForFreeShipping = Math.max(
-    0,
-    FREE_SHIPPING_THRESHOLD - totals.subtotal,
-  );
-  const shippingProgressPercent = Math.min(
-    100,
-    Math.round((totals.subtotal / FREE_SHIPPING_THRESHOLD) * 100),
-  );
 
   const handleProceedToCheckout = () => {
     setIsCartOpen(false);
@@ -103,35 +91,11 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            {/* Free Shipping Tier Progress Bar */}
-            <div className="border-b border-zinc-100 bg-zinc-50/70 px-6 py-3 dark:border-zinc-900 dark:bg-zinc-900/40">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                {remainingForFreeShipping === 0 ? (
-                  <span className="flex items-center gap-1.5 font-medium text-zinc-900 dark:text-zinc-100">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-zinc-900 dark:text-zinc-100" />
-                    Complimentary standard shipping unlocked
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
-                    <Truck className="h-3.5 w-3.5 text-zinc-500" />
-                    Add{" "}
-                    <strong className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
-                      ${remainingForFreeShipping.toFixed(2)}
-                    </strong>{" "}
-                    more for free shipping
-                  </span>
-                )}
-                <span className="font-mono text-[11px] text-zinc-500">
-                  {shippingProgressPercent}%
-                </span>
-              </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                <div
-                  className="h-full rounded-full bg-zinc-900 transition-all duration-300 dark:bg-zinc-100"
-                  style={{ width: `${shippingProgressPercent}%` }}
-                />
-              </div>
-            </div>
+            {/* Free Shipping Tier Progress Bar (SCRUM-83) */}
+            <FreeShippingProgress
+              subtotal={totals.subtotal}
+              hasFreeShippingCoupon={appliedPromo?.code === "FREESHIP"}
+            />
 
             {/* Scrollable Item List */}
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
@@ -155,15 +119,32 @@ export function CartDrawer() {
               </div>
             </div>
 
-            {/* Sticky Drawer Footer with Dynamic Pricing Breakdown */}
+            {/* Sticky Drawer Footer with Dynamic Pricing Breakdown & Promo Input */}
             <SheetFooter className="border-t border-zinc-200 px-6 py-4 dark:border-zinc-800 flex flex-col gap-3">
-              <div className="space-y-1.5">
+              {/* Promo Coupon Input (SCRUM-84) */}
+              <PromoCodeInput
+                appliedPromo={appliedPromo}
+                onApply={applyPromoCode}
+                onRemove={removePromoCode}
+              />
+
+              <div className="space-y-1.5 pt-1">
                 <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
                   <span>Subtotal</span>
                   <span className="font-mono text-zinc-700 dark:text-zinc-300">
                     ${totals.subtotal.toFixed(2)}
                   </span>
                 </div>
+
+                {totals.discount > 0 && (
+                  <div className="flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    <span>Discount ({appliedPromo?.code})</span>
+                    <span className="font-mono">
+                      -${totals.discount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
                   <span>Estimated shipping</span>
                   <span className="font-mono text-zinc-700 dark:text-zinc-300">
@@ -172,6 +153,7 @@ export function CartDrawer() {
                       : `$${totals.shippingCost.toFixed(2)}`}
                   </span>
                 </div>
+
                 <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
                   <span>Estimated tax (8%)</span>
                   <span className="font-mono text-zinc-700 dark:text-zinc-300">

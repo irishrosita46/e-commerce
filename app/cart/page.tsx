@@ -5,33 +5,25 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/storefront/Breadcrumbs";
 import { useCart } from "@/context/CartContext";
 import { CartItemRow } from "@/components/cart/CartItemRow";
+import { FreeShippingProgress } from "@/components/cart/FreeShippingProgress";
+import { PromoCodeInput } from "@/components/cart/PromoCodeInput";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  ShoppingBag,
-  ArrowRight,
-  Truck,
-  CheckCircle2,
-  ShieldCheck,
-  RotateCcw,
-} from "lucide-react";
-import { FREE_SHIPPING_THRESHOLD, calculateOrderTotals } from "@/lib/orders";
+import { ShoppingBag, ArrowRight, ShieldCheck, RotateCcw } from "lucide-react";
 
 export default function CartPage() {
-  const { items, totalItems, updateQuantity, removeItem, clearCart } = useCart();
-
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
-  const totals = calculateOrderTotals(subtotal);
-
-  const amountRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const progressPercent = Math.min(
-    100,
-    Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100)
-  );
+  const {
+    items,
+    totalItems,
+    updateQuantity,
+    removeItem,
+    clearCart,
+    totals,
+    appliedPromo,
+    applyPromoCode,
+    removePromoCode,
+  } = useCart();
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
@@ -56,7 +48,7 @@ export default function CartPage() {
             variant="ghost"
             size="sm"
             onClick={clearCart}
-            className="text-xs text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-fit"
+            className="text-xs text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-fit cursor-pointer"
           >
             Clear All Items
           </Button>
@@ -77,7 +69,7 @@ export default function CartPage() {
           </p>
           <div className="mt-6">
             <Link href="/catalog">
-              <Button className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-xs font-semibold">
+              <Button className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-xs font-semibold cursor-pointer">
                 Explore Catalog
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
@@ -107,7 +99,7 @@ export default function CartPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-xs border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                  className="text-xs border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900 cursor-pointer"
                 >
                   <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
                   Continue Shopping
@@ -118,37 +110,12 @@ export default function CartPage() {
 
           {/* Order Summary & Checkout Card */}
           <div className="lg:col-span-4 space-y-6">
-            {/* Free Shipping Progress Card */}
-            <Card className="border-zinc-200 bg-white shadow-none dark:border-zinc-800 dark:bg-zinc-950">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  {amountRemaining === 0 ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  ) : (
-                    <Truck className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-                  )}
-                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
-                    {amountRemaining === 0
-                      ? "Free Standard Shipping Unlocked!"
-                      : `Add $${amountRemaining.toFixed(
-                          2
-                        )} more for Free Shipping`}
-                  </span>
-                </div>
-
-                <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-900">
-                  <div
-                    className={`h-full transition-all duration-300 ${
-                      amountRemaining === 0 ? "bg-emerald-600" : "bg-zinc-900 dark:bg-zinc-100"
-                    }`}
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-                <p className="mt-2 text-[11px] text-zinc-500">
-                  Orders over ${FREE_SHIPPING_THRESHOLD.toFixed(2)} qualify for complimentary standard shipping.
-                </p>
-              </CardContent>
-            </Card>
+            {/* Free Shipping Progress Card (SCRUM-83) */}
+            <FreeShippingProgress
+              subtotal={totals.subtotal}
+              hasFreeShippingCoupon={appliedPromo?.code === "FREESHIP"}
+              className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950"
+            />
 
             {/* Price Breakdown */}
             <Card className="border-zinc-200 bg-white shadow-none dark:border-zinc-800 dark:bg-zinc-950">
@@ -157,45 +124,65 @@ export default function CartPage() {
                   Order Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-5 space-y-3 text-xs">
-                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                  <span>Subtotal</span>
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    ${totals.subtotal.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                  <span>Estimated Shipping</span>
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    {totals.shippingCost === 0
-                      ? "FREE"
-                      : `$${totals.shippingCost.toFixed(2)}`}
-                  </span>
-                </div>
-                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                  <span>Sales Tax (8%)</span>
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    ${totals.tax.toFixed(2)}
-                  </span>
+              <CardContent className="p-5 space-y-4 text-xs">
+                {/* Coupon Code Input (SCRUM-84) */}
+                <PromoCodeInput
+                  appliedPromo={appliedPromo}
+                  onApply={applyPromoCode}
+                  onRemove={removePromoCode}
+                />
+
+                <div className="space-y-2.5 pt-1">
+                  <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                    <span>Subtotal</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+                      ${totals.subtotal.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {totals.discount > 0 && (
+                    <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span>Discount ({appliedPromo?.code})</span>
+                      <span className="font-mono">
+                        -${totals.discount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                    <span>Estimated Shipping</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+                      {totals.shippingCost === 0
+                        ? "FREE"
+                        : `$${totals.shippingCost.toFixed(2)}`}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                    <span>Sales Tax (8%)</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+                      ${totals.tax.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <Separator className="my-2 bg-zinc-200 dark:bg-zinc-800" />
+
+                  <div className="flex justify-between text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                    <span>Estimated Total</span>
+                    <span className="font-mono">${totals.total.toFixed(2)}</span>
+                  </div>
                 </div>
 
-                <Separator className="my-2 bg-zinc-200 dark:bg-zinc-800" />
-
-                <div className="flex justify-between text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                  <span>Estimated Total</span>
-                  <span>${totals.total.toFixed(2)}</span>
-                </div>
-
-                <div className="pt-3">
+                <div className="pt-2">
                   <Link href="/checkout" className="w-full block">
-                    <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold text-xs py-5">
+                    <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold text-xs py-5 cursor-pointer">
                       <span>Proceed to Checkout</span>
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
                 </div>
 
-                <div className="pt-2 flex items-center justify-center gap-2 text-[10px] text-zinc-400 dark:text-zinc-500">
+                <div className="pt-1 flex items-center justify-center gap-2 text-[10px] text-zinc-400 dark:text-zinc-500">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   <span>Protected Authentication Route Guard</span>
                 </div>

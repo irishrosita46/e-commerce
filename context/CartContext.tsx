@@ -9,7 +9,9 @@ import React, {
   useRef,
 } from "react";
 import { Product } from "@/types/product";
+import { PromoCode, OrderTotals } from "@/types/order";
 import { useAuth } from "@/context/AuthContext";
+import { calculateOrderTotals, validatePromoCode } from "@/lib/orders";
 
 export interface CartItem {
   product: Product;
@@ -24,6 +26,14 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   subtotal: number;
+  totals: OrderTotals;
+  appliedPromo: PromoCode | null;
+  applyPromoCode: (code: string) => {
+    success: boolean;
+    error?: string;
+    promo?: PromoCode;
+  };
+  removePromoCode: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   openCart: () => void;
@@ -34,6 +44,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const GUEST_STORAGE_KEY = "aurastore_cart_guest";
 const LEGACY_STORAGE_KEY = "aurastore_cart";
+const PROMO_STORAGE_KEY = "aurastore_promo";
 
 const getStorageKey = (userId?: string | null): string => {
   return userId ? `aurastore_cart_${userId}` : GUEST_STORAGE_KEY;
@@ -65,6 +76,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
 
   const itemsRef = useRef(items);
   itemsRef.current = items;
@@ -104,8 +116,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             localStorage.removeItem(LEGACY_STORAGE_KEY);
           }
         }
+
+        // Hydrate persisted coupon code
+        const storedPromo = localStorage.getItem(PROMO_STORAGE_KEY);
+        if (storedPromo) {
+          const parsedPromo = JSON.parse(storedPromo);
+          if (parsedPromo && typeof parsedPromo === "object") {
+            setAppliedPromo(parsedPromo);
+          }
+        }
       } catch (e) {
-        console.warn("Could not load cart from localStorage:", e);
+        console.warn("Could not load cart or promo from localStorage:", e);
       }
 
       setItems(initialItems);
@@ -190,6 +211,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [items, isInitialized, isAuthLoading, user]);
 
+  // Persist or clear coupon code in localStorage
+  useEffect(() => {
+    if (typeof window === "undefined" || !isInitialized) return;
+    try {
+      if (appliedPromo) {
+        localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(appliedPromo));
+      } else {
+        localStorage.removeItem(PROMO_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.warn("Could not persist promo code:", e);
+    }
+  }, [appliedPromo, isInitialized]);
+
   const addItem = (product: Product, quantity = 1) => {
     if (!product.inStock) return;
 
@@ -231,6 +266,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([]);
   };
 
+  const applyPromoCode = (code: string) => {
+    const result = validatePromoCode(code);
+    if (result.isValid && result.promo) {
+      setAppliedPromo(result.promo);
+      return { success: true, promo: result.promo };
+    }
+    return { success: false, error: result.error || "Invalid promo code" };
+  };
+
+  const removePromoCode = () => {
+    setAppliedPromo(null);
+  };
+
   const totalItems = useMemo(() => {
     return items.reduce((sum, item) => sum + item.quantity, 0);
   }, [items]);
@@ -241,6 +289,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       0,
     );
   }, [items]);
+
+  // Dynamic pricing calculation with promo discounts and dynamic tax
+  const totals = useMemo(() => {
+    return calculateOrderTotals(subtotal, appliedPromo);
+  }, [subtotal, appliedPromo]);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -255,6 +308,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         totalItems,
         subtotal,
+        totals,
+        appliedPromo,
+        applyPromoCode,
+        removePromoCode,
         isCartOpen,
         setIsCartOpen,
         openCart,

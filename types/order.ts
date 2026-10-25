@@ -23,6 +23,23 @@ export interface OrderItem {
   image: string;
 }
 
+export interface PromoCode {
+  code: string;
+  type: "percentage" | "fixed_shipping";
+  value: number; // e.g. 10 for 10%
+  description: string;
+}
+
+export interface OrderTotals {
+  subtotal: number;
+  discount: number;
+  discountedSubtotal: number;
+  shippingCost: number;
+  tax: number;
+  total: number;
+  appliedPromo?: PromoCode | null;
+}
+
 export interface Order {
   id: string;
   reference: string;
@@ -31,6 +48,8 @@ export interface Order {
   shippingAddress: ShippingAddress;
   paymentMethod: PaymentMethod;
   subtotal: number;
+  discount?: number;
+  promoCode?: string;
   shippingCost: number;
   tax: number;
   total: number;

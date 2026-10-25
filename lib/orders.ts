@@ -1,9 +1,55 @@
-import { Order, ShippingAddress, AddressValidationErrors } from "@/types/order";
+import {
+  Order,
+  ShippingAddress,
+  AddressValidationErrors,
+  PromoCode,
+  OrderTotals,
+} from "@/types/order";
 
 const ORDERS_STORAGE_KEY = "aurastore_orders";
 
 export const RFC5322_EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
+/**
+ * Valid promotional coupons dictionary (SCRUM-84).
+ */
+export const VALID_PROMO_CODES: Record<string, PromoCode> = {
+  AURA10: {
+    code: "AURA10",
+    type: "percentage",
+    value: 10,
+    description: "10% off cart subtotal",
+  },
+  FREESHIP: {
+    code: "FREESHIP",
+    type: "fixed_shipping",
+    value: 100,
+    description: "Complimentary standard shipping",
+  },
+};
+
+/**
+ * Validates promotional codes against active promotional dictionary.
+ */
+export function validatePromoCode(rawCode: string): {
+  isValid: boolean;
+  promo?: PromoCode;
+  error?: string;
+} {
+  const normalized = (rawCode || "").trim().toUpperCase();
+  if (!normalized) {
+    return { isValid: false, error: "Please enter a promo code." };
+  }
+  const promo = VALID_PROMO_CODES[normalized];
+  if (!promo) {
+    return {
+      isValid: false,
+      error: "Invalid promo code. Try 'AURA10' or 'FREESHIP'.",
+    };
+  }
+  return { isValid: true, promo };
+}
 
 /**
  * Generates an uppercase unique order reference code following the format ORD-2026-XXXX.
@@ -85,27 +131,56 @@ export function validateShippingAddress(address: Partial<ShippingAddress>): {
 export const FREE_SHIPPING_THRESHOLD = 100;
 
 /**
- * Calculates pricing breakdown with free standard shipping over $100.
+ * Calculates pricing breakdown with free standard shipping over $100 and dynamic promo discounts (SCRUM-83, SCRUM-85).
  */
-export function calculateOrderTotals(subtotal: number): {
-  subtotal: number;
-  shippingCost: number;
-  tax: number;
-  total: number;
-} {
+export function calculateOrderTotals(
+  subtotal: number,
+  promoInput?: PromoCode | string | null
+): OrderTotals {
   const roundedSubtotal = Math.round(subtotal * 100) / 100;
-  const shippingCost =
-    roundedSubtotal >= FREE_SHIPPING_THRESHOLD || roundedSubtotal === 0
-      ? 0
-      : 9.99;
-  const tax = Math.round(roundedSubtotal * 0.08 * 100) / 100;
-  const total = Math.round((roundedSubtotal + shippingCost + tax) * 100) / 100;
+
+  let promo: PromoCode | null = null;
+  if (typeof promoInput === "string") {
+    const res = validatePromoCode(promoInput);
+    if (res.isValid && res.promo) {
+      promo = res.promo;
+    }
+  } else if (promoInput && typeof promoInput === "object") {
+    promo = promoInput;
+  }
+
+  // Calculate discount deduction (SCRUM-85)
+  let discount = 0;
+  if (promo?.type === "percentage" && roundedSubtotal > 0) {
+    discount = Math.round(((roundedSubtotal * promo.value) / 100) * 100) / 100;
+  }
+  const discountedSubtotal = Math.max(
+    0,
+    Math.round((roundedSubtotal - discount) * 100) / 100
+  );
+
+  // Free shipping if subtotal >= 100, or empty cart, or FREESHIP coupon applied
+  let shippingCost = 9.99;
+  if (
+    roundedSubtotal === 0 ||
+    roundedSubtotal >= FREE_SHIPPING_THRESHOLD ||
+    promo?.code === "FREESHIP"
+  ) {
+    shippingCost = 0;
+  }
+
+  // Dynamic 8% sales tax calculated on discounted subtotal
+  const tax = Math.round(discountedSubtotal * 0.08 * 100) / 100;
+  const total = Math.round((discountedSubtotal + shippingCost + tax) * 100) / 100;
 
   return {
     subtotal: roundedSubtotal,
+    discount,
+    discountedSubtotal,
     shippingCost,
     tax,
     total,
+    appliedPromo: promo,
   };
 }
 

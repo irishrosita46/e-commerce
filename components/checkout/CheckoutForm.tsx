@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { User } from "@/types/auth";
-import { CartItem } from "@/context/CartContext";
+import { CartItem, useCart } from "@/context/CartContext";
 import {
   ShippingAddress,
   AddressValidationErrors,
@@ -69,7 +69,7 @@ export function CheckoutForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
 
-  const totals = calculateOrderTotals(subtotal);
+  const { totals, appliedPromo } = useCart();
 
   const handleInputChange = (field: keyof ShippingAddress, value: string) => {
     setAddress((prev) => ({ ...prev, [field]: value }));
@@ -128,6 +128,8 @@ export function CheckoutForm({
         shippingAddress: address,
         paymentMethod,
         subtotal: totals.subtotal,
+        discount: totals.discount,
+        promoCode: appliedPromo?.code,
         shippingCost: totals.shippingCost,
         tax: totals.tax,
         total: totals.total,
@@ -184,11 +186,18 @@ export function CheckoutForm({
               <p className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider">
                 Total Paid
               </p>
-              <p className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+              <p className="text-base font-bold text-zinc-900 dark:text-zinc-100 font-mono">
                 ${completedOrder.total.toFixed(2)}
               </p>
             </div>
           </div>
+
+          {completedOrder.discount && completedOrder.discount > 0 ? (
+            <div className="flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50/50 dark:bg-emerald-950/30 px-3 py-1.5 rounded-md">
+              <span>Promo Discount ({completedOrder.promoCode})</span>
+              <span className="font-mono">-${completedOrder.discount.toFixed(2)}</span>
+            </div>
+          ) : null}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-zinc-600 dark:text-zinc-400">
             <div>

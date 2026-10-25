@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import { Breadcrumbs } from "@/components/storefront/Breadcrumbs";
-import { calculateOrderTotals } from "@/lib/orders";
 import {
   Lock,
   ShieldAlert,
@@ -24,8 +23,7 @@ import {
 
 export default function CheckoutPage() {
   const { user, isAuthenticated, isLoading, openAuthModal } = useAuth();
-  const { items, totalItems, subtotal, clearCart } = useCart();
-  const totals = calculateOrderTotals(subtotal);
+  const { items, totalItems, subtotal, totals, appliedPromo, clearCart } = useCart();
 
   if (isLoading) {
     return (
@@ -43,7 +41,7 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full  mb-5">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-5">
             <Lock className="h-7 w-7" />
           </div>
 
@@ -57,19 +55,19 @@ export default function CheckoutPage() {
           <div className="space-y-2.5">
             <Button
               onClick={() => openAuthModal("login", "/checkout")}
-              className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium"
+              className="w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 text-xs h-10 font-medium cursor-pointer"
             >
               Sign In to Continue
             </Button>
             <Button
               variant="outline"
               onClick={() => openAuthModal("register", "/checkout")}
-              className="w-full border-zinc-200 dark:border-zinc-800 text-xs h-10 font-medium"
+              className="w-full border-zinc-200 dark:border-zinc-800 text-xs h-10 font-medium cursor-pointer"
             >
               Create New Account
             </Button>
             <Link href="/catalog" className="inline-block pt-2">
-              <span className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 underline underline-offset-4 flex items-center gap-1">
+              <span className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 underline underline-offset-4 flex items-center gap-1 cursor-pointer">
                 <ArrowLeft className="h-3 w-3" />
                 Return to product catalog
               </span>
@@ -98,63 +96,38 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Checkout Column */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Customer Session Card */}
-            <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold text-sm">
-                    {user?.name?.charAt(0) || "U"}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                      Logged in as {user?.name}
-                    </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Account email: {user?.email}
-                    </p>
-                  </div>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50 text-[11px] font-medium flex items-center gap-1"
-                >
-                  <CheckCircle2 className="h-3 w-3" />
-                  Session Active
-                </Badge>
-              </div>
-            </div>
-
-            {/* Checkout Form */}
+          {/* Main Checkout Form Column */}
+          <div className="lg:col-span-2">
             <CheckoutForm
               user={user}
               items={items}
               subtotal={subtotal}
-              onOrderPlaced={() => clearCart()}
+              onOrderPlaced={() => {
+                clearCart();
+              }}
             />
           </div>
 
-          {/* Sidebar Cart Summary */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60 h-fit space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4" />
-                <span>Order Summary</span>
-              </h3>
-              <span className="text-xs text-zinc-500">
+          {/* Sticky Order Items Snapshot */}
+          <div className="h-fit rounded-xl border border-zinc-200 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+                <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  Order Summary
+                </h2>
+              </div>
+              <Badge variant="secondary" className="text-[10px] font-mono">
                 {totalItems} {totalItems === 1 ? "item" : "items"}
-              </span>
+              </Badge>
             </div>
 
-            <Separator className="bg-zinc-100 dark:bg-zinc-800" />
-
             {items.length === 0 ? (
-              <p className="text-xs text-zinc-500 text-center py-4">
-                Your cart is empty. Please add items from the catalog.
+              <p className="text-xs text-zinc-400 py-4 text-center">
+                Your cart is empty.
               </p>
             ) : (
-              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
                 {items.map((item) => (
                   <div
                     key={item.product.id}
@@ -179,7 +152,7 @@ export default function CheckoutPage() {
                         </p>
                       </div>
                     </div>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 shrink-0">
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 shrink-0 font-mono">
                       ${(item.product.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -192,23 +165,37 @@ export default function CheckoutPage() {
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between text-zinc-500">
                 <span>Subtotal</span>
-                <span>${totals.subtotal.toFixed(2)}</span>
+                <span className="font-mono text-zinc-700 dark:text-zinc-300">
+                  ${totals.subtotal.toFixed(2)}
+                </span>
               </div>
+
+              {totals.discount > 0 && (
+                <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+                  <span>Discount ({appliedPromo?.code})</span>
+                  <span className="font-mono">
+                    -${totals.discount.toFixed(2)}
+                  </span>
+                </div>
+              )}
+
               <div className="flex justify-between text-zinc-500">
                 <span>Shipping</span>
-                <span>
+                <span className="font-mono text-zinc-700 dark:text-zinc-300">
                   {totals.shippingCost === 0
-                    ? "Free (Orders over $100)"
+                    ? "Free"
                     : `$${totals.shippingCost.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between text-zinc-500">
                 <span>Estimated Tax (8%)</span>
-                <span>${totals.tax.toFixed(2)}</span>
+                <span className="font-mono text-zinc-700 dark:text-zinc-300">
+                  ${totals.tax.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between font-bold text-sm text-zinc-900 dark:text-zinc-100 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <span>Total</span>
-                <span>${totals.total.toFixed(2)}</span>
+                <span className="font-mono">${totals.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
