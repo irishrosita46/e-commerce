@@ -177,7 +177,19 @@ export default function Navbar({
                       </p>
                     </div>
 
-                    <div className="py-1">
+                    <div className="py-1 space-y-0.5">
+                      <Link
+                        href="/account"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900 transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <User className="h-3.5 w-3.5 text-zinc-500" />
+                          <span>Account &amp; Orders</span>
+                        </span>
+                        <ChevronRight className="h-3 w-3 text-zinc-400" />
+                      </Link>
+
                       <Link
                         href="/checkout"
                         onClick={() => setIsUserDropdownOpen(false)}
@@ -273,9 +285,19 @@ export default function Navbar({
               );
             })}
 
-            <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-1">
               {effectiveUserName ? (
-                <div className="flex items-center justify-between px-3 py-1">
+                <>
+                  <Link
+                    href="/account"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-lg"
+                  >
+                    <User className="h-4 w-4 text-zinc-500" />
+                    <span>Account &amp; Orders</span>
+                  </Link>
+
+                  <div className="flex items-center justify-between px-3 py-1">
                   <span className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[180px]">
                     {effectiveUserName}
                   </span>
@@ -290,6 +312,7 @@ export default function Navbar({
                     Sign out
                   </button>
                 </div>
+              </>
               ) : (
                 <Button
                   onClick={() => {

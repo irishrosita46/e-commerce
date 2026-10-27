@@ -188,7 +188,7 @@ export function calculateOrderTotals(
  * Saves a completed order to localStorage under aurastore_orders.
  */
 export function saveOrder(order: Order): void {
-  if (typeof window === "undefined") return;
+  if (typeof localStorage === "undefined") return;
   try {
     const existing = getStoredOrders();
     const updated = [order, ...existing];
@@ -202,7 +202,7 @@ export function saveOrder(order: Order): void {
  * Retrieves all stored orders from localStorage.
  */
 export function getStoredOrders(): Order[] {
-  if (typeof window === "undefined") return [];
+  if (typeof localStorage === "undefined") return [];
   try {
     const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
     if (!raw) return [];
