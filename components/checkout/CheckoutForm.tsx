@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { User } from "@/types/auth";
 import { CartItem, useCart } from "@/context/CartContext";
 import {
@@ -10,18 +10,22 @@ import {
   AddressValidationErrors,
   PaymentMethod,
   Order,
+  CardDetails,
+  CardValidationErrors,
 } from "@/types/order";
 import {
   validateShippingAddress,
   generateOrderReference,
-  calculateOrderTotals,
   saveOrder,
+  validateCardDetails,
+  detectCardBrand,
 } from "@/lib/orders";
+import { getSavedAddresses } from "@/lib/addresses";
 import { decrementStock } from "@/lib/inventory";
+import { PaymentMethodSelector } from "@/components/checkout/PaymentMethodSelector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   CheckCircle2,
   CreditCard,
@@ -51,21 +55,49 @@ export function CheckoutForm({
   subtotal,
   onOrderPlaced,
 }: CheckoutFormProps) {
+  const router = useRouter();
+
   // Multi-step State (Step 1: Shipping Address -> Step 2: Payment & Review)
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
-  const [address, setAddress] = useState<ShippingAddress>({
-    fullName: user.name || "",
-    email: user.email || "",
-    street: "Dessauer Str. 3-5",
-    city: "Berlin",
-    postalCode: "10963",
-    country: "Germany",
+  // Pre-seed from user's saved addresses if present
+  const [address, setAddress] = useState<ShippingAddress>(() => {
+    if (typeof localStorage !== "undefined" && user?.id) {
+      const saved = getSavedAddresses(user.id);
+      const def = saved.find((a) => a.isDefault) || saved[0];
+      if (def) {
+        return {
+          fullName: def.fullName,
+          email: def.email,
+          street: def.street,
+          city: def.city,
+          postalCode: def.postalCode,
+          country: def.country,
+        };
+      }
+    }
+    return {
+      fullName: user.name || "",
+      email: user.email || "",
+      street: "Dessauer Str. 3-5",
+      city: "Berlin",
+      postalCode: "10963",
+      country: "Germany",
+    };
   });
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("credit_card");
+
+  const [cardDetails, setCardDetails] = useState<CardDetails>({
+    cardNumber: "",
+    cardholderName: user.name || "",
+    expiry: "",
+    cvv: "",
+  });
+
   const [errors, setErrors] = useState<AddressValidationErrors>({});
+  const [cardErrors, setCardErrors] = useState<CardValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
 
@@ -98,7 +130,9 @@ export function CheckoutForm({
 
     setErrors({});
     setCurrentStep(2);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const handlePlaceOrder = (e: React.FormEvent) => {
@@ -109,11 +143,23 @@ export function CheckoutForm({
       return;
     }
 
+    // SCRUM-91: Validate simulated card details when paying with credit card
+    if (paymentMethod === "credit_card") {
+      const cardValidation = validateCardDetails(cardDetails);
+      if (!cardValidation.isValid) {
+        setCardErrors(cardValidation.errors);
+        return;
+      }
+    }
+
+    setCardErrors({});
     setIsSubmitting(true);
 
-    // Simulate order placement with visual loading delay
+    // SCRUM-92: Simulated payment processing latency (1.5 seconds) with loading state
     setTimeout(() => {
       const reference = generateOrderReference();
+      const cleanNum = cardDetails.cardNumber.replace(/\D/g, "");
+
       const newOrder: Order = {
         id: `ord-${Date.now().toString(36)}`,
         reference,
@@ -127,6 +173,14 @@ export function CheckoutForm({
         })),
         shippingAddress: address,
         paymentMethod,
+        paymentDetails:
+          paymentMethod === "credit_card"
+            ? {
+                last4: cleanNum.slice(-4),
+                brand: detectCardBrand(cardDetails.cardNumber),
+                cardholderName: cardDetails.cardholderName,
+              }
+            : undefined,
         subtotal: totals.subtotal,
         discount: totals.discount,
         promoCode: appliedPromo?.code,
@@ -142,10 +196,13 @@ export function CheckoutForm({
       setCompletedOrder(newOrder);
       setIsSubmitting(false);
       onOrderPlaced(newOrder);
-    }, 700);
+
+      // SCRUM-93: Redirect to dedicated order confirmation receipt screen
+      router.push(`/checkout/success?ref=${reference}`);
+    }, 1500);
   };
 
-  // Order Confirmed State
+  // Order Confirmed State (in-page fallback)
   if (completedOrder) {
     return (
       <div className="rounded-xl border border-zinc-200 bg-white p-8 text-center shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60">
@@ -231,7 +288,7 @@ export function CheckoutForm({
               <CreditCard className="h-3.5 w-3.5" />
               Paid via{" "}
               {completedOrder.paymentMethod === "credit_card"
-                ? "Credit Card"
+                ? `Credit Card ${completedOrder.paymentDetails?.last4 ? `(•••• ${completedOrder.paymentDetails.last4})` : ""}`
                 : completedOrder.paymentMethod === "paypal"
                   ? "PayPal"
                   : "Apple Pay"}
@@ -265,7 +322,28 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Simulated Gateway Processing Overlay (SCRUM-92) */}
+      {isSubmitting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 text-center shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+              <Loader2 className="h-7 w-7 animate-spin text-zinc-900 dark:text-zinc-100" />
+            </div>
+            <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+              Authorizing Payment...
+            </h3>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              Contacting secure payment gateway ({paymentMethod === "credit_card" ? "Mock Visa/MC" : paymentMethod}). Processing transaction token...
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] font-mono text-zinc-400 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+              <span>Simulated 256-Bit SSL Handshake</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Multi-Step Stepper Header */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60">
         <div className="flex items-center justify-between">
@@ -508,69 +586,15 @@ export function CheckoutForm({
             </div>
           </div>
 
-          {/* Payment Method Selector */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60">
-            <div className="flex items-center gap-2 mb-4">
-              <CreditCard className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-              <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Select Payment Method
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                {
-                  id: "credit_card",
-                  label: "Credit Card",
-                  desc: "Simulated Visa/MC",
-                },
-                { id: "paypal", label: "PayPal", desc: "Instant checkout" },
-                {
-                  id: "apple_pay",
-                  label: "Apple Pay",
-                  desc: "One-click authorization",
-                },
-              ].map((method) => {
-                const isSelected = paymentMethod === method.id;
-                return (
-                  <button
-                    key={method.id}
-                    type="button"
-                    onClick={() => setPaymentMethod(method.id as PaymentMethod)}
-                    className={`flex flex-col items-start p-3 rounded-lg border text-left transition-colors cursor-pointer ${
-                      isSelected
-                        ? "border-zinc-900 bg-zinc-50 dark:border-zinc-100 dark:bg-zinc-950/60"
-                        : "border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                        {method.label}
-                      </span>
-                      <div
-                        className={`h-3 w-3 rounded-full border ${
-                          isSelected
-                            ? "border-zinc-900 bg-zinc-900 dark:border-zinc-100 dark:bg-zinc-100"
-                            : "border-zinc-300"
-                        }`}
-                      />
-                    </div>
-                    <span className="text-[10px] text-zinc-400 mt-1">
-                      {method.desc}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-4 flex items-center gap-2 text-[11px] text-zinc-500 bg-zinc-50/70 dark:bg-zinc-950/50 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800">
-              <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>
-                Demonstration checkout flow. All transactions are simulated
-                client-side with zero actual charges.
-              </span>
-            </div>
-          </div>
+          {/* SCRUM-91: Payment Method Selector Component */}
+          <PaymentMethodSelector
+            paymentMethod={paymentMethod}
+            onPaymentMethodChange={setPaymentMethod}
+            cardDetails={cardDetails}
+            onCardDetailsChange={setCardDetails}
+            errors={cardErrors}
+            userName={user.name}
+          />
 
           {/* Action Buttons: Back & Place Order */}
           <div className="flex items-center gap-3">

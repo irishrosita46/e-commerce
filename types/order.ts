@@ -40,6 +40,21 @@ export interface OrderTotals {
   appliedPromo?: PromoCode | null;
 }
 
+export interface CardDetails {
+  cardNumber: string;
+  cardholderName: string;
+  expiry: string;
+  cvv: string;
+}
+
+export type CardValidationErrors = Partial<Record<keyof CardDetails, string>>;
+
+export interface PaymentDetails {
+  last4?: string;
+  brand?: string;
+  cardholderName?: string;
+}
+
 export interface Order {
   id: string;
   reference: string;
@@ -47,6 +62,7 @@ export interface Order {
   items: OrderItem[];
   shippingAddress: ShippingAddress;
   paymentMethod: PaymentMethod;
+  paymentDetails?: PaymentDetails;
   subtotal: number;
   discount?: number;
   promoCode?: string;

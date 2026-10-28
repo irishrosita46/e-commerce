@@ -4,6 +4,8 @@ import {
   AddressValidationErrors,
   PromoCode,
   OrderTotals,
+  CardDetails,
+  CardValidationErrors,
 } from "@/types/order";
 
 const ORDERS_STORAGE_KEY = "aurastore_orders";
@@ -61,6 +63,87 @@ export function generateOrderReference(): string {
     suffix += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return `ORD-2026-${suffix}`;
+}
+
+/**
+ * Formats raw card input into groups of 4 separated by spaces (max 16 digits).
+ */
+export function formatCardNumber(value: string): string {
+  const digits = (value || "").replace(/\D/g, "").slice(0, 16);
+  return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+/**
+ * Detects payment card network based on BIN / IIN prefix.
+ */
+export function detectCardBrand(
+  number: string
+): "visa" | "mastercard" | "amex" | "generic" {
+  const clean = (number || "").replace(/\D/g, "");
+  if (clean.startsWith("4")) return "visa";
+  if (/^5[1-5]/.test(clean)) return "mastercard";
+  if (/^3[47]/.test(clean)) return "amex";
+  return "generic";
+}
+
+/**
+ * Formats expiration input into MM/YY with automatic slash formatting.
+ */
+export function formatExpiry(value: string): string {
+  const digits = (value || "").replace(/\D/g, "").slice(0, 4);
+  if (digits.length >= 3) {
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  }
+  return digits;
+}
+
+/**
+ * Validates simulated payment card fields (SCRUM-91).
+ */
+export function validateCardDetails(card: Partial<CardDetails>): {
+  isValid: boolean;
+  errors: CardValidationErrors;
+} {
+  const errors: CardValidationErrors = {};
+
+  // Card Number validation
+  const cleanNumber = (card.cardNumber || "").replace(/\D/g, "");
+  if (!cleanNumber || cleanNumber.length !== 16) {
+    errors.cardNumber = "Valid 16-digit card number is required.";
+  }
+
+  // Cardholder Name
+  const name = (card.cardholderName || "").trim();
+  if (!name || name.length < 2) {
+    errors.cardholderName = "Cardholder name is required (minimum 2 characters).";
+  }
+
+  // Expiration Date
+  const expiry = (card.expiry || "").trim();
+  const match = expiry.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/);
+  if (!match) {
+    errors.expiry = "Valid expiry in MM/YY format is required.";
+  } else {
+    const month = parseInt(match[1], 10);
+    const expYear = 2000 + parseInt(match[2], 10);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    if (expYear < currentYear || (expYear === currentYear && month < currentMonth)) {
+      errors.expiry = "Card expiration date has passed.";
+    }
+  }
+
+  // CVV
+  const cleanCvv = (card.cvv || "").replace(/\D/g, "");
+  if (!cleanCvv || (cleanCvv.length !== 3 && cleanCvv.length !== 4)) {
+    errors.cvv = "Valid 3 or 4-digit security code (CVV) is required.";
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
 }
 
 /**
@@ -220,4 +303,22 @@ export function getStoredOrders(): Order[] {
 export function getUserOrders(userId: string): Order[] {
   const orders = getStoredOrders();
   return orders.filter((o) => o.userId === userId);
+}
+
+/**
+ * Retrieves a specific order by its unique ORD-2026-XXXX reference.
+ */
+export function getOrderByReference(reference: string): Order | undefined {
+  const orders = getStoredOrders();
+  const normalized = (reference || "").trim().toUpperCase();
+  return orders.find((o) => o.reference.toUpperCase() === normalized);
+}
+
+/**
+ * Retrieves a specific order by its internal unique id.
+ */
+export function getOrderById(orderId: string): Order | undefined {
+  const orders = getStoredOrders();
+  const normalized = (orderId || "").trim();
+  return orders.find((o) => o.id === normalized);
 }
