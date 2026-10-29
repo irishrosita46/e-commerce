@@ -117,7 +117,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
+            className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
@@ -165,7 +165,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           variant="outline"
           size="sm"
           onClick={handleFillDemo}
-          className="w-full text-[11px] h-8 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer"
+          className="w-full text-[11px] h-10 sm:h-8 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer"
         >
           Demo account (customer@aurastore.com)
         </Button>
@@ -177,7 +177,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
         <button
           type="button"
           onClick={onSwitchToRegister}
-          className="font-semibold text-zinc-900 underline underline-offset-4 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300 cursor-pointer"
+          className="inline-flex min-h-10 items-center font-semibold text-zinc-900 underline underline-offset-4 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300 cursor-pointer"
         >
           Create an account
         </button>

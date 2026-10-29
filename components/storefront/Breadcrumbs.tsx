@@ -76,7 +76,7 @@ export function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
               {item.href ? (
                 <Link
                   href={item.href}
-                  className="inline-flex items-center gap-1 transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-900 dark:hover:text-zinc-100"
+                  className="inline-flex min-h-9 items-center gap-1 transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-900 dark:hover:text-zinc-100"
                 >
                   {isFirst && <Home className="h-3 w-3" />}
                   <span>{item.label}</span>

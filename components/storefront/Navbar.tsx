@@ -134,7 +134,7 @@ export default function Navbar({
             variant="outline"
             size="icon"
             onClick={openCart}
-            className="relative h-8 w-8 border-zinc-200 dark:border-zinc-800 cursor-pointer"
+            className="relative h-10 w-10 sm:h-8 sm:w-8 border-zinc-200 dark:border-zinc-800 cursor-pointer"
             aria-label={`Shopping Cart (${effectiveCartCount} items)`}
           >
             <ShoppingBag className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
@@ -157,7 +157,7 @@ export default function Navbar({
                   variant="outline"
                   size="icon"
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  className="h-8 w-8 border-zinc-200 dark:border-zinc-800 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 cursor-pointer"
+                  className="h-10 w-10 sm:h-8 sm:w-8 border-zinc-200 dark:border-zinc-800 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 cursor-pointer"
                   title={`Account: ${effectiveUserName}`}
                   aria-label={`Account of ${effectiveUserName}`}
                   aria-expanded={isUserDropdownOpen}
@@ -225,7 +225,7 @@ export default function Navbar({
                 variant="outline"
                 size="icon"
                 onClick={() => setIsSignOutDialogOpen(true)}
-                className="h-8 w-8 border-zinc-200 dark:border-zinc-800 text-zinc-600 hover:border-red-200 hover:bg-red-50/50 hover:text-red-600 dark:text-zinc-400 dark:hover:border-red-900/60 dark:hover:bg-red-950/30 dark:hover:text-red-400 cursor-pointer transition-colors"
+                className="h-10 w-10 sm:h-8 sm:w-8 border-zinc-200 dark:border-zinc-800 text-zinc-600 hover:border-red-200 hover:bg-red-50/50 hover:text-red-600 dark:text-zinc-400 dark:hover:border-red-900/60 dark:hover:bg-red-950/30 dark:hover:text-red-400 cursor-pointer transition-colors"
                 title="Sign out"
                 aria-label="Sign out"
               >
@@ -237,7 +237,7 @@ export default function Navbar({
               variant="outline"
               size="icon"
               onClick={handleLoginClick}
-              className="h-8 w-8 border-zinc-200 dark:border-zinc-800 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 cursor-pointer"
+              className="h-10 w-10 sm:h-8 sm:w-8 border-zinc-200 dark:border-zinc-800 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 cursor-pointer"
               title="Sign in / Register"
               aria-label="Sign in"
             >
@@ -250,7 +250,7 @@ export default function Navbar({
             variant="outline"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="h-8 w-8 md:hidden border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 cursor-pointer"
+            className="h-10 w-10 sm:h-8 sm:w-8 md:hidden border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? (

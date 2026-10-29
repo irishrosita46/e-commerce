@@ -24,7 +24,7 @@ export function CategoryPills({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none",
+        "flex items-center gap-2 overflow-x-auto pb-2 pt-1 pr-8 scrollbar-none [mask-image:linear-gradient(to_right,#000_calc(100%-40px),transparent)]",
         className
       )}
     >
@@ -37,7 +37,7 @@ export function CategoryPills({
             type="button"
             onClick={() => onSelectCategory(cat.name)}
             className={cn(
-              "inline-flex items-center whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100",
+              "inline-flex items-center whitespace-nowrap rounded-full border px-3.5 py-2 text-xs font-medium transition-all duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100",
               isActive
                 ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-950 shadow-none"
                 : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"

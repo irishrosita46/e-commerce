@@ -125,7 +125,7 @@ export function AddressManager({
           <Button
             size="sm"
             onClick={() => setIsAdding(true)}
-            className="h-8 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 gap-1.5 cursor-pointer"
+            className="h-10 sm:h-8 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 gap-1.5 cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add Address</span>
@@ -249,14 +249,14 @@ export function AddressManager({
               variant="outline"
               size="sm"
               onClick={() => setIsAdding(false)}
-              className="h-8 text-xs"
+              className="h-10 sm:h-8 text-xs"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               size="sm"
-              className="h-8 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900"
+              className="h-10 sm:h-8 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900"
             >
               Save Address
             </Button>

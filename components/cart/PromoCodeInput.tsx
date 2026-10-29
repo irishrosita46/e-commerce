@@ -78,13 +78,13 @@ export function PromoCodeInput({
                   if (error) setError(null);
                 }}
                 placeholder="PROMO CODE"
-                className="w-full h-8 pl-8 pr-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs uppercase font-mono tracking-wider text-zinc-900 dark:text-zinc-100 placeholder:normal-case placeholder:font-sans placeholder:tracking-normal placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-100"
+                className="w-full h-10 sm:h-8 pl-8 pr-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs uppercase font-mono tracking-wider text-zinc-900 dark:text-zinc-100 placeholder:normal-case placeholder:font-sans placeholder:tracking-normal placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-100"
               />
             </div>
             <button
               type="submit"
               disabled={!code.trim()}
-              className="h-8 px-3 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="h-10 sm:h-8 px-3 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               Apply
             </button>
@@ -102,7 +102,7 @@ export function PromoCodeInput({
             <button
               type="button"
               onClick={() => handleApplyPreset("AURA10")}
-              className="font-mono text-zinc-600 dark:text-zinc-300 underline hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer"
+              className="inline-flex min-h-9 items-center px-1 font-mono text-zinc-600 dark:text-zinc-300 underline hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer"
             >
               AURA10
             </button>
@@ -110,7 +110,7 @@ export function PromoCodeInput({
             <button
               type="button"
               onClick={() => handleApplyPreset("FREESHIP")}
-              className="font-mono text-zinc-600 dark:text-zinc-300 underline hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer"
+              className="inline-flex min-h-9 items-center px-1 font-mono text-zinc-600 dark:text-zinc-300 underline hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer"
             >
               FREESHIP
             </button>

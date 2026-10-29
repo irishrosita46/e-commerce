@@ -569,7 +569,7 @@ export function CheckoutForm({
                 variant="ghost"
                 size="sm"
                 onClick={() => setCurrentStep(1)}
-                className="h-7 text-[11px] text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 gap-1 cursor-pointer"
+                className="h-9 sm:h-7 text-[11px] text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 gap-1 cursor-pointer"
               >
                 <Edit2 className="h-3 w-3" />
                 Edit

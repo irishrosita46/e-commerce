@@ -122,7 +122,7 @@ export default function Home() {
             </div>
             <Link
               href="/categories"
-              className="mt-3 sm:mt-0 text-xs font-semibold text-zinc-900 dark:text-zinc-100 hover:underline flex items-center gap-1"
+              className="mt-3 sm:mt-0 min-h-10 sm:min-h-0 text-xs font-semibold text-zinc-900 dark:text-zinc-100 hover:underline flex items-center gap-1"
             >
               <span>Explore all categories</span>
               <ArrowRight className="h-3 w-3" />

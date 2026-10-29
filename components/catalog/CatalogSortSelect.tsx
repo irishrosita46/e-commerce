@@ -156,7 +156,7 @@ export function CatalogSortSelect({
               aria-selected={isSelected}
               tabIndex={isOpen ? 0 : -1}
               onClick={() => handleSelect(opt.value)}
-              className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors cursor-pointer focus:outline-none focus:bg-zinc-100 dark:focus:bg-zinc-900 ${
+              className={`flex w-full items-center justify-between rounded-md px-3 py-2.5 text-xs font-medium transition-colors cursor-pointer focus:outline-none focus:bg-zinc-100 dark:focus:bg-zinc-900 ${
                 isSelected
                   ? "bg-zinc-100 text-zinc-950 font-semibold dark:bg-zinc-900 dark:text-zinc-50"
                   : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/60 dark:hover:text-zinc-100"

@@ -18,7 +18,7 @@ export function SearchInput({
   onChange,
   onClear,
   onSubmit,
-  placeholder = "Search products, descriptions, or specs...",
+  placeholder = "Search products...",
   className,
 }: SearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);

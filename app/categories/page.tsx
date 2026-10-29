@@ -186,7 +186,7 @@ export default function CategoriesPage() {
           <Link
             key={cat.name}
             href={`/catalog?category=${encodeURIComponent(cat.name)}`}
-            className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-700 hover:border-zinc-400 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:border-zinc-600 transition-colors"
+            className="inline-flex min-h-10 items-center rounded-full border border-zinc-200 bg-white px-3.5 py-1 text-xs font-medium sm:min-h-0 text-zinc-700 hover:border-zinc-400 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:border-zinc-600 transition-colors"
           >
             {cat.name} ({cat.count})
           </Link>

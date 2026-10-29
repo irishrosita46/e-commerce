@@ -67,7 +67,7 @@ export default function CheckoutPage() {
               Create New Account
             </Button>
             <Link href="/catalog" className="inline-block pt-2">
-              <span className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 underline underline-offset-4 flex items-center gap-1 cursor-pointer">
+              <span className="min-h-10 text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 underline underline-offset-4 flex items-center gap-1 cursor-pointer">
                 <ArrowLeft className="h-3 w-3" />
                 Return to product catalog
               </span>

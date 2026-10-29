@@ -137,13 +137,13 @@ export function ProductCard({
           size="sm"
           disabled={outOfStock}
           onClick={handleAdd}
-          className={
+          className={`h-10 px-4 sm:h-8 sm:px-3 ${
             added
               ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 transition-colors"
               : outOfStock
               ? "bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500 cursor-not-allowed"
               : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors"
-          }
+          }`}
         >
           {added ? (
             <>

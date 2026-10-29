@@ -42,7 +42,7 @@ export function CartItemRow({
             <button
               type="button"
               onClick={() => onRemove(product.id)}
-              className="text-zinc-400 hover:text-red-500 transition-colors cursor-pointer p-0.5"
+              className="-m-2 inline-flex h-9 w-9 shrink-0 items-center justify-center text-zinc-400 hover:text-red-500 transition-colors cursor-pointer"
               title="Remove item"
               aria-label={`Remove ${product.name}`}
             >
@@ -62,7 +62,7 @@ export function CartItemRow({
             <button
               type="button"
               onClick={() => onUpdateQuantity(product.id, quantity - 1)}
-              className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer transition-colors"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer transition-colors"
               aria-label={`Decrease quantity of ${product.name}`}
             >
               <Minus className="h-3 w-3" />
@@ -76,7 +76,7 @@ export function CartItemRow({
             <button
               type="button"
               onClick={() => onUpdateQuantity(product.id, quantity + 1)}
-              className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer transition-colors"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer transition-colors"
               aria-label={`Increase quantity of ${product.name}`}
             >
               <Plus className="h-3 w-3" />

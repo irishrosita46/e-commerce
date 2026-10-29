@@ -163,7 +163,7 @@ export function PaymentMethodSelector({
               variant="outline"
               size="sm"
               onClick={handleFillTestCard}
-              className="h-7 text-[11px] gap-1 border-dashed border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+              className="h-9 sm:h-7 text-[11px] gap-1 border-dashed border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
             >
               <Sparkles className="h-3 w-3 text-amber-500" />
               <span>Fill Test Card</span>

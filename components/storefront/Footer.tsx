@@ -32,7 +32,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="inline-flex min-h-10 items-center sm:min-h-0 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >
                   Storefront Home
                 </Link>
@@ -40,7 +40,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/catalog"
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="inline-flex min-h-10 items-center sm:min-h-0 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >
                   Product Catalog
                 </Link>
@@ -48,7 +48,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/categories"
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="inline-flex min-h-10 items-center sm:min-h-0 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >
                   Categories
                 </Link>
@@ -56,7 +56,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="inline-flex min-h-10 items-center sm:min-h-0 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >
                   About AuraStore
                 </Link>
@@ -64,7 +64,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/cart"
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="inline-flex min-h-10 items-center sm:min-h-0 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >
                   Shopping Cart
                 </Link>

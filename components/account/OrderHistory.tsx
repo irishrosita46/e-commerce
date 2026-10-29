@@ -63,7 +63,7 @@ export function OrderHistory({ orders }: OrderHistoryProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between pb-1">
+      <div className="flex items-start justify-between gap-3 pb-1">
         <div>
           <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
             <PackageCheck className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
@@ -73,7 +73,7 @@ export function OrderHistory({ orders }: OrderHistoryProps) {
             View completed transactions, tracking references, and printable receipts.
           </p>
         </div>
-        <span className="text-xs font-mono text-zinc-500">
+        <span className="shrink-0 whitespace-nowrap text-xs font-mono text-zinc-500">
           {orders.length} {orders.length === 1 ? "order" : "orders"}
         </span>
       </div>
@@ -132,7 +132,7 @@ export function OrderHistory({ orders }: OrderHistoryProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => window.print()}
-                    className="h-8 text-[11px] border-zinc-200 dark:border-zinc-800 gap-1 cursor-pointer"
+                    className="h-10 sm:h-8 text-[11px] border-zinc-200 dark:border-zinc-800 gap-1 cursor-pointer"
                   >
                     <Printer className="h-3 w-3" />
                     <span>Print Receipt</span>
@@ -142,7 +142,7 @@ export function OrderHistory({ orders }: OrderHistoryProps) {
                     type="button"
                     onClick={() => toggleExpand(order.id)}
                     aria-label="Toggle order details"
-                    className="p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 cursor-pointer"
+                    className="flex h-10 w-10 items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 cursor-pointer"
                   >
                     {isExpanded ? (
                       <ChevronUp className="h-4 w-4" />

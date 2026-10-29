@@ -476,7 +476,7 @@ export function CatalogView({ products }: CatalogViewProps) {
                         key={tag}
                         type="button"
                         onClick={() => handleTagSelect(tag)}
-                        className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${
+                        className={`text-[11px] px-3 py-2 sm:px-2.5 sm:py-1 rounded-full border transition-colors cursor-pointer ${
                           selectedTag === tag
                             ? "bg-zinc-900 border-zinc-900 text-white dark:bg-zinc-100 dark:border-zinc-100 dark:text-zinc-900 font-semibold"
                             : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700"
